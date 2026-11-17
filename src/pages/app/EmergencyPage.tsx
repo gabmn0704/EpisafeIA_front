@@ -54,7 +54,7 @@ export default function EmergencyPage() {
                     </span>
                   </button>
                 </div>
-                <p className="mt-10 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
+                <p className="mt-24 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
                 {flow.phase === 'error' && (
                   <div role="alert" className="mt-6 w-full max-w-md rounded-2xl bg-black/30 p-4 text-sm">
                     <p className="font-semibold">No pudimos enviar la alerta: {flow.error}</p>
