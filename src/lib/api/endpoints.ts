@@ -116,7 +116,9 @@ export const dashboardApi = {
 /** Opens the authenticated SSE stream. Returns a disposer. */
 export function openStream(onEvent: (e: StreamEvent) => void, onStatus?: (open: boolean) => void): () => void {
   const token = tokenStore.get()?.accessToken
-  if (!token || typeof EventSource === 'undefined') return () => undefined
+  // With dev mocks there is no SSE server: skip instead of hitting a real backend.
+  const mocked = import.meta.env.DEV && import.meta.env.VITE_USE_MOCKS === 'true'
+  if (!token || mocked || typeof EventSource === 'undefined') return () => undefined
   const es = new EventSource(`${API_URL}/stream?token=${encodeURIComponent(token)}`)
   es.onopen = () => onStatus?.(true)
   es.onerror = () => onStatus?.(false)
