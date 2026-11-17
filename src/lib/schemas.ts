@@ -19,7 +19,7 @@ export const registerSchema = z
       .regex(/[A-Z]/, 'Incluye una mayúscula')
       .regex(/[0-9]/, 'Incluye un número'),
     confirm: z.string(),
-    terms: z.literal(true, { message: 'Debes aceptar para continuar' }),
+    terms: z.boolean().refine((v) => v, { message: 'Debes aceptar para continuar' }),
   })
   .refine((v) => v.password === v.confirm, { path: ['confirm'], message: 'Las contraseñas no coinciden' })
 export type RegisterValues = z.infer<typeof registerSchema>
