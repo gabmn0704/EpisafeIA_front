@@ -14,7 +14,7 @@ export function Logo({ className, tone = 'auto' }: { className?: string; tone?: 
     <span className={clsx('inline-flex items-center gap-2.5', className)}>
       <LogoMark />
       <span className={clsx('font-display text-xl font-bold tracking-tight', tone === 'light' ? 'text-white' : 'text-ink')}>
-        EpiSafe<span className="text-brand"> IA</span>
+        EpiSafe<span className={tone === 'light' ? 'text-lime' : 'text-brand'}> IA</span>
       </span>
     </span>
   )
