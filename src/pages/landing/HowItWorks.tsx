@@ -26,7 +26,7 @@ export function HowItWorks() {
         { scale: 0.88, opacity: 0.35 },
         { scale: 1, opacity: 1, ease: 'none', scrollTrigger: { trigger: el, start: 'top 90%', end: 'top 45%', scrub: true } },
       )
-      gsap.to(el, { opacity: 0.25, scale: 0.96, ease: 'none', scrollTrigger: { trigger: el, start: 'bottom 35%', end: 'bottom 5%', scrub: true } })
+      gsap.to(el, { opacity: 0.5, scale: 0.97, ease: 'none', scrollTrigger: { trigger: el, start: 'bottom 35%', end: 'bottom 5%', scrub: true } })
     })
   })
 
@@ -41,7 +41,7 @@ export function HowItWorks() {
             <p className="mt-6 max-w-md text-lg text-muted">Sin configuraciones raras ni conocimientos técnicos. Tú vives, EpiSafe IA conecta los puntos.</p>
           </div>
         </div>
-        <ol className="space-y-8 lg:space-y-[18vh] lg:pb-[10vh] lg:pt-[8vh]">
+        <ol className="space-y-8 lg:space-y-[12vh] lg:pt-[4vh]">
           {steps.map(({ icon: Icon, title, body, color }, i) => (
             <li key={title} data-step className={`rounded-[2rem] p-8 sm:p-10 ${color}`}>
               <div className="flex items-center justify-between">

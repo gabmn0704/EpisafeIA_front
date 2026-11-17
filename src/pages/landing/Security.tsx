@@ -22,7 +22,7 @@ export function Security() {
   const row = [...marquee, ...marquee]
 
   return (
-    <section ref={root} id="seguridad" className="grain relative overflow-hidden bg-[#08051f] py-32 text-white md:py-48">
+    <section ref={root} id="seguridad" className="grain relative overflow-hidden bg-[#08051f] pt-32 text-white md:pt-48">
       <div className="pointer-events-none absolute left-1/2 top-0 size-[40rem] -translate-x-1/2 rounded-full bg-brand/30 blur-[140px]" />
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8">
         <h2 className="max-w-5xl font-display text-[clamp(2.4rem,5vw,4.75rem)] font-semibold leading-[1.02] tracking-[-0.03em] text-balance">
@@ -43,7 +43,7 @@ export function Security() {
         </ul>
       </div>
 
-      <div className="relative mt-24 overflow-hidden border-y border-white/10 py-6" aria-hidden>
+      <div className="relative mt-24 overflow-hidden border-y border-white/10 py-8" aria-hidden>
         <div className="flex w-max animate-[marquee_32s_linear_infinite] gap-12 whitespace-nowrap motion-reduce:animate-none">
           {row.map((t, i) => (
             <span key={i} className="flex items-center gap-12 font-display text-3xl font-semibold text-white/80">
