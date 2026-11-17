@@ -112,7 +112,7 @@ export function AppLayout() {
         <SidebarBody />
       </aside>
 
-      <div className="lg:pl-72">
+      <div className="lg:pl-72 print:pl-0">
         <header className="no-print sticky top-0 z-30 flex h-16 items-center justify-between gap-3 border-b border-line bg-bg/80 px-4 backdrop-blur-xl sm:px-8">
           <div className="flex items-center gap-3 lg:hidden">
             <button type="button" onClick={() => setDrawer(true)} aria-label="Abrir menú" className="grid size-10 place-items-center rounded-full border border-line bg-surface">
