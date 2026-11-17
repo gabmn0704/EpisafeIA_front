@@ -22,7 +22,7 @@ export function Hero() {
     const tl = gsap.timeline({ defaults: { ease: 'power4.out' } })
     tl.from('[data-hero-word]', { yPercent: 110, opacity: 0, duration: 1.1, stagger: 0.07 })
       .from('[data-hero-sub]', { y: 24, opacity: 0, duration: 0.9 }, '-=0.6')
-      .from('[data-hero-cta] > *', { y: 20, opacity: 0, duration: 0.7, stagger: 0.12 }, '-=0.5')
+      .from('[data-hero-cta]', { y: 20, opacity: 0, duration: 0.8 }, '-=0.5')
       .from('[data-hero-orb]', { scale: 0.6, opacity: 0, duration: 1.6, stagger: 0.2 }, 0)
     gsap.to('[data-hero-orb]', { y: -60, ease: 'none', scrollTrigger: { trigger: root.current, start: 'top top', end: 'bottom top', scrub: true } })
     gsap.to('[data-hero-content]', { opacity: 0.15, y: -80, ease: 'none', scrollTrigger: { trigger: root.current, start: 'center top', end: 'bottom top', scrub: true } })
