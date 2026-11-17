@@ -17,7 +17,7 @@ export function SeizureHeatmap({ seizures, weeks = 20, onSelect }: { seizures: S
         <div className="flex min-w-max gap-2" role="grid" aria-label={`Calendario de crisis de las últimas ${weeks} semanas, ${total} en total`}>
           <div className="flex flex-col gap-[5px] pt-0.5 text-[11px] font-semibold text-muted" aria-hidden>
             {dayLabels.map((l, i) => (
-              <span key={i} className="grid h-[18px] place-items-center">
+              <span key={i} className="grid h-[22px] place-items-center">
                 {l}
               </span>
             ))}
@@ -25,7 +25,7 @@ export function SeizureHeatmap({ seizures, weeks = 20, onSelect }: { seizures: S
           {grid.map((col, ci) => (
             <div key={ci} role="row" className="flex flex-col gap-[5px]">
               {col.map((cell) => {
-                if (cell.future) return <span key={cell.date} className="size-[18px]" aria-hidden />
+                if (cell.future) return <span key={cell.date} className="size-[22px]" aria-hidden />
                 const label = `${formatDate(cell.date)}: ${cell.count === 0 ? 'sin crisis' : `${cell.count} crisis, intensidad máxima ${cell.maxSeverity}`}`
                 return (
                   <button
@@ -36,7 +36,7 @@ export function SeizureHeatmap({ seizures, weeks = 20, onSelect }: { seizures: S
                     aria-label={label}
                     disabled={cell.count === 0}
                     onClick={() => onSelect?.(cell.date)}
-                    className={clsx('size-[18px] rounded-[5px] transition hover:scale-125 disabled:hover:scale-100', severityClass[Math.min(5, cell.maxSeverity)])}
+                    className={clsx('size-[22px] rounded-[5px] transition hover:scale-125 disabled:hover:scale-100', severityClass[Math.min(5, cell.maxSeverity)])}
                   />
                 )
               })}

@@ -85,7 +85,7 @@ export default function CrisisPage() {
             <CardHeader title="Horas del día" subtitle="Cuándo suelen ocurrir" icon={<Clock3 className="size-5" />} />
             <div className="flex h-36 items-end gap-[3px]" role="img" aria-label="Distribución de crisis por hora del día">
               {hours.map((n, h) => (
-                <div key={h} className="group relative flex-1">
+                <div key={h} className="group relative flex h-full flex-1 items-end">
                   <div title={`${h}:00 - ${n} crisis`} className="w-full rounded-t-md bg-brand transition group-hover:bg-lime" style={{ height: `${Math.max(4, (n / peak) * 100)}%`, opacity: n === 0 ? 0.2 : 1 }} />
                 </div>
               ))}
