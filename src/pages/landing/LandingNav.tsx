@@ -52,7 +52,7 @@ export function LandingNav() {
               {authed ? 'Ir a mi panel' : 'Iniciar sesión'}
             </Link>
             {!authed && (
-              <Link to="/registro" className={buttonClasses('lime', 'sm', 'hidden sm:inline-flex')}>
+              <Link to="/registro" className={buttonClasses('lime', 'sm', 'max-sm:hidden')}>
                 Empezar gratis
               </Link>
             )}

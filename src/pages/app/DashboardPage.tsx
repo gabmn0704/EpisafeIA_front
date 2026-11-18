@@ -88,7 +88,7 @@ export default function DashboardPage() {
 
         <StatTile className="md:col-span-3" tone="brand" label="Adherencia 30 días" icon={<ShieldCheck className="size-5" />} value={s?.adherence && s.adherence.total > 0 ? percent(s.adherence.rate) : '--'} caption={s?.adherence && s.adherence.total > 0 ? `${s.adherence.taken} de ${s.adherence.total} dosis` : 'Agrega tu medicación para verla'} />
         <StatTile className="md:col-span-4" tone="lime" label="Racha sin crisis" icon={<Flame className="size-5" />} value={s ? s.seizureFreeDays : '--'} unit={s?.seizureFreeDays === 1 ? 'día' : 'días'} caption={s?.lastSeizure ? `Última: ${relativeTime(s.lastSeizure.startedAt)}` : 'Sin crisis registradas'} />
-        <StatTile className="md:col-span-3" tone="ink" label="Última crisis" icon={<CalendarCheck2 className="size-5" />} value={s?.lastSeizure ? formatDate(s.lastSeizure.startedAt, { day: 'numeric', month: 'short' }) : '--'} caption={s?.lastSeizure ? `Intensidad ${s.lastSeizure.severity ?? '?'} de 5` : 'Nada que reportar'} />
+        <StatTile className="col-span-2 md:col-span-3" tone="ink" label="Última crisis" icon={<CalendarCheck2 className="size-5" />} value={s?.lastSeizure ? formatDate(s.lastSeizure.startedAt, { day: 'numeric', month: 'short' }) : '--'} caption={s?.lastSeizure ? `Intensidad ${s.lastSeizure.severity ?? '?'} de 5` : 'Nada que reportar'} />
 
         <Link to="/app/dispositivos" className="press relative col-span-2 flex items-center gap-3 overflow-hidden rounded-[1.75rem] border border-line/70 bg-surface p-4 shadow-elev-1 md:col-span-4 md:flex-col md:items-start">
           <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-coral-soft text-coral">

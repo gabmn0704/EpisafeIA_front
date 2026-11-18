@@ -47,20 +47,21 @@ export function BrandIntro() {
       const oLen = outline.getTotalLength()
       const pLen = pulse.getTotalLength()
       gsap.set(outline, { strokeDasharray: oLen, strokeDashoffset: oLen })
-      gsap.set(pulse, { strokeDasharray: pLen, strokeDashoffset: pLen })
+      gsap.set(pulse, { strokeDasharray: pLen, strokeDashoffset: pLen, opacity: 0 })
       gsap.set(fill, { opacity: 0, scale: 0.92, transformOrigin: '50% 50%' })
       gsap.set(dot, { scale: 0, transformOrigin: '50% 50%' })
       gsap.set(shine, { x: -260 })
       gsap.set(word, { opacity: 0, y: 10 })
-      const t = gsap.timeline({ onComplete: () => gsap.to(el, { opacity: 0, duration: 0.35, ease: 'power2.out', onComplete: finish }) })
-      t.to(outline, { strokeDashoffset: 0, duration: 0.6, ease: 'power2.inOut' })
-        .to(fill, { opacity: 1, scale: 1, duration: 0.4, ease: 'power3.out' }, '-=0.15')
-        .to(outline, { opacity: 0, duration: 0.3 }, '<')
-        .to(pulse, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.inOut' }, '-=0.1')
-        .to(dot, { scale: 1, duration: 0.3, ease: 'back.out(3)' }, '-=0.05')
-        .to(shine, { x: 520, duration: 0.6, ease: 'power1.inOut' }, '-=0.25')
-        .to(word, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.6')
-        .to({}, { duration: 0.25 })
+      const t = gsap.timeline({ onComplete: () => gsap.to(el, { opacity: 0, duration: 0.3, ease: 'power2.out', onComplete: finish }) })
+      t.to(outline, { strokeDashoffset: 0, duration: 0.5, ease: 'power2.inOut' })
+        .to(fill, { opacity: 1, scale: 1, duration: 0.32, ease: 'power3.out' }, '-=0.1')
+        .to(outline, { opacity: 0, duration: 0.25 }, '<')
+        .set(pulse, { opacity: 1 })
+        .to(pulse, { strokeDashoffset: 0, duration: 0.42, ease: 'power2.inOut' })
+        .to(dot, { scale: 1, duration: 0.28, ease: 'back.out(3)' }, '-=0.05')
+        .to(shine, { x: 520, duration: 0.5, ease: 'power1.inOut' }, '-=0.2')
+        .to(word, { opacity: 1, y: 0, duration: 0.35, ease: 'power3.out' }, '-=0.5')
+        .to({}, { duration: 0.15 })
       tl = t
     })
 
@@ -81,7 +82,7 @@ export function BrandIntro() {
       onClick={() => skip.current()}
       className="fixed inset-0 z-[300] grid place-items-center bg-[radial-gradient(120%_90%_at_50%_0%,#3a1fb8_0%,#150c4d_60%,#0a0628_100%)]"
     >
-      <div className="flex flex-col items-center">
+      <div className="relative">
         <svg viewBox="0 0 512 512" className="size-32" aria-hidden>
           <defs>
             <linearGradient id="in-shield" x1="96" y1="40" x2="416" y2="480" gradientUnits="userSpaceOnUse">
@@ -108,7 +109,7 @@ export function BrandIntro() {
           <path data-pulse d={PULSE} fill="none" stroke="#C6FF3D" strokeWidth="30" strokeLinecap="round" strokeLinejoin="round" />
           <circle data-dot cx="404" cy="270" r="19" fill="#FF3D5E" />
         </svg>
-        <p data-word className="mt-5 font-display text-3xl font-bold tracking-tight text-white">
+        <p data-word className="absolute left-1/2 top-full mt-5 w-max -translate-x-1/2 font-display text-3xl font-bold tracking-tight text-white">
           EpiSafe<span className="text-lime"> IA</span>
         </p>
       </div>

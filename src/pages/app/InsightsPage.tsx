@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { buttonClasses } from '@/components/ui/buttonStyles'
 import { motion } from 'framer-motion'
 import { Brain, RefreshCw, Sparkles, Stethoscope } from 'lucide-react'
 import { EvidenceBar } from '@/components/insights/EvidenceBar'
@@ -57,7 +59,7 @@ export default function InsightsPage() {
           <Skeleton className="h-60" />
         </div>
       ) : !lead ? (
-        <EmptyState icon={<Brain className="size-6" />} title="Todavía no hay patrones" description="La IA necesita al menos 3 crisis y unos días de registro para encontrar relaciones confiables. Sigue registrando tu día." />
+        <EmptyState icon={<Brain className="size-6" />} title="Todavía no hay patrones" description="La IA necesita al menos 3 crisis y unos días de registro para encontrar relaciones confiables. Sigue registrando tu día." action={<Link to="/app/registro" className={buttonClasses('primary', 'md')}>Registrar mi día</Link>} />
       ) : (
         <div className="grid grid-flow-dense gap-4 sm:gap-5 lg:grid-cols-2">
           <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-8 lg:col-span-2 lg:p-12">
