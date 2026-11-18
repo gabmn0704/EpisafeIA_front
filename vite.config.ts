@@ -59,9 +59,8 @@ export default defineConfig({
       output: {
         manualChunks(id: string) {
           if (!id.includes('node_modules')) return undefined
-          if (id.includes('recharts') || id.includes('d3-')) return 'charts'
           if (id.includes('framer-motion') || id.includes('gsap')) return 'motion'
-          if (id.includes('react')) return 'vendor'
+          if (/node_modules[\/](react|react-dom|react-router|react-router-dom|scheduler)[\/]/.test(id)) return 'vendor'
           return undefined
         },
       },
