@@ -8,6 +8,7 @@ import { AuthProvider } from './providers/AuthProvider'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { ToastProvider } from './providers/ToastProvider'
 import { AppRoutes } from './routes/AppRoutes'
+import { BrandIntro } from './components/brand/BrandIntro'
 import { ServerWakeBanner } from './components/ui/ServerWakeBanner'
 import { UpdatePrompt } from './components/ui/UpdatePrompt'
 
@@ -26,6 +27,7 @@ async function bootstrap() {
                 <AppRoutes />
                 <UpdatePrompt />
                 <ServerWakeBanner />
+                <BrandIntro />
               </AuthProvider>
             </BrowserRouter>
           </ToastProvider>

@@ -1,7 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Link, Route, Routes } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
-import { Spinner } from '@/components/ui/States'
+import { BrandLoader } from '@/components/brand/BrandLoader'
 import { buttonClasses } from '@/components/ui/buttonStyles'
 import { GuestOnly, RequireAuth } from './guards'
 
@@ -37,7 +37,7 @@ function NotFound() {
 
 export function AppRoutes() {
   return (
-    <Suspense fallback={<Spinner label="Cargando" />}>
+    <Suspense fallback={<BrandLoader />}>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route element={<GuestOnly />}>

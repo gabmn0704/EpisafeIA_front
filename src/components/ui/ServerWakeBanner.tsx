@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { CloudOff, Coffee } from 'lucide-react'
+import { CloudOff } from 'lucide-react'
+import { LogoMark } from '@/components/ui/Logo'
 import { useServerWake } from '@/hooks/useServerWake'
 import { ensureAwake, retryWake, WAKE_MAX_MS } from '@/lib/api/wake'
 
@@ -31,7 +32,13 @@ export function ServerWakeBanner() {
           className="no-print fixed inset-x-4 top-[max(0.75rem,env(safe-area-inset-top))] z-[130] mx-auto max-w-md rounded-3xl bg-ink p-4 text-bg shadow-elev-3"
         >
           <div className="flex items-start gap-3">
-            <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-lime text-lime-ink">{failed ? <CloudOff className="size-5" aria-hidden /> : <Coffee className="size-5" aria-hidden />}</span>
+            {failed ? (
+              <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-lime text-lime-ink">
+                <CloudOff className="size-5" aria-hidden />
+              </span>
+            ) : (
+              <LogoMark className="size-10 shrink-0 animate-[heartbeat_1.2s_ease-in-out_infinite]" />
+            )}
             <div className="min-w-0 flex-1">
               <p className="font-display font-semibold leading-tight">{failed ? 'El servidor no responde todavía' : 'Despertando el servidor…'}</p>
               <p className="mt-0.5 text-sm text-bg/75">{failed ? 'Revisa tu conexión e inténtalo de nuevo en un momento.' : 'La primera vez del día puede tardar hasta un minuto. Tus datos están a salvo.'}</p>

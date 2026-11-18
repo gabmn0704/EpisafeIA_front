@@ -41,7 +41,14 @@ async function ping(): Promise<boolean> {
     const res = await fetch(`${API_URL}/health`, { signal: ctrl.signal, cache: 'no-store' })
     return res.ok
   } catch {
-    return false
+    // Si CORS bloquea la lectura pero el servidor contesta, está despierto: que la petición real
+    // reporte el problema de CORS en lugar de esperar 90 s por algo que no es un arranque en frío.
+    try {
+      await fetch(`${API_URL}/health`, { mode: 'no-cors', signal: ctrl.signal, cache: 'no-store' })
+      return true
+    } catch {
+      return false
+    }
   } finally {
     clearTimeout(t)
   }

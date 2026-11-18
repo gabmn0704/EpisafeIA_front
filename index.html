@@ -17,7 +17,15 @@
     <script src="/theme-init.js"></script>
   </head>
   <body>
-    <div id="root"></div>
+    <style>
+      #boot { display: none; position: fixed; inset: 0; z-index: 300; align-items: center; justify-content: center; background: radial-gradient(120% 90% at 50% 0%, #3a1fb8 0%, #150c4d 60%, #0a0628 100%); }
+      html[data-intro] #boot { display: flex; }
+    </style>
+    <div id="root">
+      <div id="boot" aria-hidden="true">
+        <svg viewBox="0 0 512 512" width="128" height="128"><path d="M256 36c68 36 142 52 196 52v170c0 112-84 184-196 220C144 442 60 370 60 258V88c54 0 128-16 196-52Z" fill="none" stroke="#fff" stroke-opacity="0.5" stroke-width="6" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

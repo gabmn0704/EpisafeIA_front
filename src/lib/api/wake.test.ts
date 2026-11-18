@@ -13,7 +13,8 @@ describe('ensureAwake (cold start)', () => {
 
   it('retries /health until the server answers and reports "waking" meanwhile', async () => {
     let calls = 0
-    vi.stubGlobal('fetch', vi.fn(async () => {
+    vi.stubGlobal('fetch', vi.fn(async (_u: string, init?: RequestInit) => {
+      if (init?.mode === 'no-cors') throw new TypeError('network')
       calls++
       if (calls < 4) throw new TypeError('network')
       return new Response('{"status":"ok"}', { status: 200 })
@@ -35,6 +36,14 @@ describe('ensureAwake (cold start)', () => {
     await vi.advanceTimersByTimeAsync(95_000)
     await expect(p).resolves.toBe(false)
     expect(wakeStore.get().status).toBe('failed')
+  })
+
+  it('treats a CORS-blocked but reachable server as awake', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (_u: string, init?: RequestInit) => {
+      if (init?.mode === 'no-cors') return new Response(null)
+      throw new TypeError('CORS')
+    }))
+    await expect(ensureAwake()).resolves.toBe(true)
   })
 
   it('answers immediately once awake', async () => {

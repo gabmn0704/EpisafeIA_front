@@ -29,8 +29,6 @@ const err = (status: number, code: string, message: string) => HttpResponse.json
 
 /** Fresh in-memory state per call, so tests can reset between cases. */
 export function createHandlers() {
-  const dailyLogs = buildDailyLogs()
-  const seizures = buildSeizures(dailyLogs)
   // Una cuenta recién registrada (marca en sessionStorage) empieza sin medicamentos ni contactos.
   const fresh = (() => {
     try {
@@ -47,6 +45,8 @@ export function createHandlers() {
       /* sin sessionStorage */
     }
   }
+  const dailyLogs = buildDailyLogs()
+  const seizures = fresh ? [] : buildSeizures(dailyLogs)
   const meds: Medication[] = fresh ? [] : structuredClone(seedMeds)
   const contacts: EmergencyContact[] = fresh ? [] : structuredClone(seedContacts)
   const doseStatus = new Map<string, DoseStatus>()
@@ -104,6 +104,7 @@ export function createHandlers() {
         return err(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos.')
       }
       setFresh(false)
+      if (seizures.length === 0) seizures.push(...buildSeizures(dailyLogs))
       meds.splice(0, meds.length, ...structuredClone(seedMeds))
       contacts.splice(0, contacts.length, ...structuredClone(seedContacts))
       return HttpResponse.json({ user: demoUser, accessToken: 'mock-access', refreshToken: 'mock-refresh' })
@@ -115,6 +116,7 @@ export function createHandlers() {
       // Una cuenta nueva empieza sin medicamentos ni contactos: cada persona configura los suyos.
       meds.splice(0, meds.length)
       contacts.splice(0, contacts.length)
+      seizures.splice(0, seizures.length)
       setFresh(true)
       return HttpResponse.json({ user: { ...demoUser, email: body.email, fullName: body.fullName }, accessToken: 'mock-access', refreshToken: 'mock-refresh' }, { status: 201 })
     }),
@@ -131,7 +133,7 @@ export function createHandlers() {
       const rows = schedule()
       const taken = rows.filter((r) => r.status === 'taken').length
       return HttpResponse.json({
-        risk: riskToday,
+        risk: fresh ? null : riskToday,
         adherence: adherenceFor(30),
         lastSeizure: seizures[0] ?? null,
         seizureFreeDays: freeDays(),
@@ -141,14 +143,14 @@ export function createHandlers() {
       })
     }),
 
-    http.get(url('/ai/risk/today'), () => HttpResponse.json(riskToday)),
+    http.get(url('/ai/risk/today'), () => (fresh ? err(404, 'NOT_FOUND', 'Sin riesgo calculado') : HttpResponse.json(riskToday))),
     http.get(url('/ai/risk/history'), ({ request }) => {
       const days = Number(new URL(request.url).searchParams.get('days') ?? 30)
-      return HttpResponse.json(buildRiskHistory(days, dailyLogs))
+      return HttpResponse.json(fresh ? [] : buildRiskHistory(days, dailyLogs))
     }),
     http.get(url('/ai/insights'), async () => {
       await delay(300)
-      return HttpResponse.json(insights)
+      return HttpResponse.json(fresh ? [] : insights)
     }),
     http.post(url('/ai/insights/refresh'), async () => {
       await delay(900)

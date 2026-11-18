@@ -1,8 +1,8 @@
+import { lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import { Activity, BellRing, CalendarCheck2, Flame, HeartPulse, ShieldCheck, Sparkles } from 'lucide-react'
 import { FactorList } from '@/components/dashboard/FactorList'
 import { RiskGauge } from '@/components/dashboard/RiskGauge'
-import { RiskHistoryChart } from '@/components/dashboard/RiskHistoryChart'
 import { StatTile } from '@/components/dashboard/StatTile'
 import { Badge } from '@/components/ui/Badge'
 import { buttonClasses } from '@/components/ui/buttonStyles'
@@ -12,6 +12,8 @@ import { useQuery } from '@/hooks/useQuery'
 import { aiApi, dashboardApi } from '@/lib/api/endpoints'
 import { formatDate, greeting, percent, relativeTime } from '@/lib/format'
 import { useAuth } from '@/providers/AuthProvider'
+
+const RiskHistoryChart = lazy(() => import('@/components/dashboard/RiskHistoryChart').then((m) => ({ default: m.RiskHistoryChart })))
 
 const alertText: Record<string, string> = {
   tachycardia: 'Taquicardia sostenida',
@@ -116,7 +118,7 @@ export default function DashboardPage() {
 
         <Card className="col-span-2 md:col-span-8">
           <CardHeader title="Evolución de 30 días" subtitle="Tu puntaje diario de riesgo" icon={<Activity className="size-5" />} />
-          {history.loading ? <Skeleton className="h-56" /> : history.error ? <ErrorState compact error={history.error} onRetry={history.reload} /> : history.data && history.data.length > 0 ? <RiskHistoryChart data={history.data} /> : <p className="text-muted">Aún no hay historial.</p>}
+          {history.loading ? <Skeleton className="h-56" /> : history.error ? <ErrorState compact error={history.error} onRetry={history.reload} /> : history.data && history.data.length > 0 ? <Suspense fallback={<Skeleton className="h-56" />}><RiskHistoryChart data={history.data} /></Suspense> : <p className="text-muted">Aún no hay historial.</p>}
         </Card>
 
         <Card className="col-span-2 md:col-span-4">
