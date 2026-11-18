@@ -45,7 +45,7 @@ function Slider({
     <div className="rounded-3xl border border-line bg-surface p-5">
       <div className="flex items-center justify-between">
         <label htmlFor={id} className="flex items-center gap-3 font-semibold">
-          <span className="grid size-10 place-items-center rounded-2xl bg-brand-soft text-brand">{icon}</span>
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">{icon}</span>
           {label}
         </label>
         <p className="font-display text-3xl font-bold tabular-nums">

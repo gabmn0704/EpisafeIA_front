@@ -67,17 +67,17 @@ export default function CrisisPage() {
           </Card>
 
           <div className="grid grid-cols-3 gap-3 lg:col-span-4 lg:grid-cols-1">
-            <div className="rounded-3xl bg-brand p-5 text-brand-ink">
-              <p className="text-sm font-semibold opacity-85">Total</p>
-              <p className="mt-3 font-display text-4xl font-bold tabular-nums">{list.loading ? '--' : seizures.length}</p>
+            <div className="rounded-[1.5rem] bg-brand p-4 text-brand-ink">
+              <p className="text-[0.78rem] font-semibold leading-tight opacity-85">Total</p>
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums">{list.loading ? '--' : seizures.length}</p>
             </div>
-            <div className="rounded-3xl bg-lime p-5 text-lime-ink">
-              <p className="text-sm font-semibold opacity-85">Últimos 30 días</p>
-              <p className="mt-3 font-display text-4xl font-bold tabular-nums">{list.loading ? '--' : last30}</p>
+            <div className="rounded-[1.5rem] bg-lime p-4 text-lime-ink">
+              <p className="text-[0.78rem] font-semibold leading-tight opacity-85">Últimos 30 días</p>
+              <p className="mt-2 font-display text-3xl font-bold tabular-nums">{list.loading ? '--' : last30}</p>
             </div>
-            <div className="rounded-3xl bg-ink p-5 text-bg">
-              <p className="text-sm font-semibold opacity-85">Duración media</p>
-              <p className="mt-3 font-display text-3xl font-bold">{list.loading ? '--' : formatDuration(avg)}</p>
+            <div className="rounded-[1.5rem] bg-ink p-4 text-bg">
+              <p className="text-[0.78rem] font-semibold leading-tight opacity-85">Duración media</p>
+              <p className="mt-2 font-display text-2xl font-bold">{list.loading ? '--' : formatDuration(avg)}</p>
             </div>
           </div>
 
@@ -110,10 +110,10 @@ export default function CrisisPage() {
             ) : visible.length === 0 ? (
               <EmptyState icon={<Activity className="size-6" />} title="Sin crisis registradas" description="Cuando registres una, la verás aquí con su duración e intensidad." action={<Button onClick={() => setCreating(true)}>Registrar crisis</Button>} />
             ) : (
-              <ul className="max-h-[28rem] divide-y divide-line overflow-y-auto pr-1 scrollbar-thin">
+              <ul className="divide-y lg:max-h-[28rem] divide-line overflow-y-auto pr-1 scrollbar-thin">
                 {visible.map((s) => (
                   <li key={s.id}>
-                    <Link to={`/app/crisis/${s.id}`} className="group flex items-center gap-4 rounded-2xl px-2 py-3.5 transition hover:bg-surface-2">
+                    <Link to={`/app/crisis/${s.id}`} className="group flex items-center gap-4 rounded-2xl px-2 py-3.5 transition active:bg-surface-2">
                       <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft font-display text-lg font-bold text-brand">{s.severity ?? '?'}</span>
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-semibold">{s.seizureType ?? 'Crisis'}</p>

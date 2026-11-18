@@ -35,7 +35,7 @@ export default function EmergencyPage() {
       <PageHeader title="Emergencia" description="Un toque avisa a tus contactos con tu hora y tu ubicación. Tienes 5 segundos para cancelar si fue un error." />
 
       <div className="grid grid-flow-dense gap-5 lg:grid-cols-12">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[radial-gradient(80%_80%_at_50%_0%,#ff5c78_0%,#d0003c_60%,#7a0024_100%)] p-8 text-white lg:col-span-8 lg:p-12" aria-live="assertive">
+        <div className="relative overflow-hidden rounded-[2rem] shadow-elev-3 bg-[radial-gradient(80%_80%_at_50%_0%,#ff5c78_0%,#d0003c_60%,#7a0024_100%)] p-5 text-white sm:p-8 lg:col-span-8 lg:p-12" aria-live="assertive">
           <AnimatePresence mode="wait">
             {flow.phase === 'idle' || flow.phase === 'error' ? (
               <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center py-6 text-center">
@@ -54,7 +54,7 @@ export default function EmergencyPage() {
                     </span>
                   </button>
                 </div>
-                <p className="mt-24 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
+                <p className="mt-20 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
                 {flow.phase === 'error' && (
                   <div role="alert" className="mt-6 w-full max-w-md rounded-2xl bg-black/30 p-4 text-sm">
                     <p className="font-semibold">No pudimos enviar la alerta: {flow.error}</p>

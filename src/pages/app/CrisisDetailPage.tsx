@@ -100,7 +100,7 @@ export default function CrisisDetailPage() {
 
         <Card className="lg:col-span-4">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-2xl bg-brand-soft text-brand">
+            <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
               <Moon className="size-5" />
             </span>
             <h2 className="font-display text-lg font-semibold">La noche anterior</h2>
