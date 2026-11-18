@@ -8,6 +8,7 @@ import { AuthProvider } from './providers/AuthProvider'
 import { ThemeProvider } from './providers/ThemeProvider'
 import { ToastProvider } from './providers/ToastProvider'
 import { AppRoutes } from './routes/AppRoutes'
+import { UpdatePrompt } from './components/ui/UpdatePrompt'
 
 async function bootstrap() {
   // Mocks are only ever active in development with VITE_USE_MOCKS=true.
@@ -22,6 +23,7 @@ async function bootstrap() {
             <BrowserRouter>
               <AuthProvider>
                 <AppRoutes />
+                <UpdatePrompt />
               </AuthProvider>
             </BrowserRouter>
           </ToastProvider>
