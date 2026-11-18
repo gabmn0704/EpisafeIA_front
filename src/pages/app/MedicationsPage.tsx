@@ -5,6 +5,7 @@ import { MedicationForm } from '@/components/medications/MedicationForm'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card, CardHeader } from '@/components/ui/Card'
+import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { Modal } from '@/components/ui/Modal'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/States'
@@ -27,6 +28,7 @@ export default function MedicationsPage() {
   const meds = useQuery(() => medicationsApi.list())
   const adherence = useQuery(() => medicationsApi.adherence(30))
   const [editing, setEditing] = useState<Medication | 'new' | null>(null)
+  const [removing, setRemoving] = useState<Medication | null>(null)
 
   const mark = async (item: ScheduleItem, status: DoseStatus) => {
     const prev = schedule.data
@@ -55,10 +57,10 @@ export default function MedicationsPage() {
   }
 
   const remove = async (m: Medication) => {
-    if (!window.confirm(`¿Eliminar ${m.name}? Esta acción no se puede deshacer.`)) return
     try {
       await medicationsApi.remove(m.id)
       toast.success(`${m.name} eliminado`)
+      setRemoving(null)
       meds.reload()
       schedule.reload()
     } catch (e) {
@@ -81,11 +83,11 @@ export default function MedicationsPage() {
         }
       />
 
-      <div className="grid grid-flow-dense gap-5 lg:grid-cols-12">
+      <div className="grid grid-flow-dense gap-4 sm:gap-5 lg:grid-cols-12">
         <Card className="lg:col-span-7">
           <CardHeader title="Agenda de hoy" subtitle={total ? `${done} de ${total} dosis tomadas` : 'Sin dosis programadas'} icon={<Clock className="size-5" />} />
           {total > 0 && (
-            <div className="mb-5 h-3 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={total} aria-label="Progreso de dosis de hoy">
+            <div className="mb-5 h-3.5 overflow-hidden rounded-full bg-surface-2" role="progressbar" aria-valuenow={done} aria-valuemin={0} aria-valuemax={total} aria-label="Progreso de dosis de hoy">
               <div className="h-full rounded-full bg-lime transition-all duration-700" style={{ width: `${(done / total) * 100}%` }} />
             </div>
           )}
@@ -100,34 +102,39 @@ export default function MedicationsPage() {
           ) : total === 0 ? (
             <EmptyState icon={<Pill className="size-6" />} title="No tienes dosis hoy" description="Agrega un medicamento con sus horarios para recibir tu agenda diaria." action={<Button onClick={() => setEditing('new')}>Agregar medicamento</Button>} />
           ) : (
-            <ul className="space-y-3">
+            <ul className="stagger space-y-3">
               {schedule.data?.map((item) => {
                 const ui = statusUi[item.status]
                 const taken = item.status === 'taken'
                 return (
-                  <li key={`${item.medicationId}-${item.scheduledFor}`} className={clsx('flex flex-wrap items-center gap-4 rounded-2xl border p-4 transition', taken ? 'border-ok/30 bg-ok/10' : 'border-line bg-surface')}>
-                    <div className="grid w-16 place-items-center rounded-xl bg-ink py-2 font-display text-lg font-bold tabular-nums text-bg">{formatTime(item.scheduledFor)}</div>
-                    <div className="min-w-0 flex-1">
-                      <p className={clsx('truncate font-semibold', taken && 'line-through opacity-70')}>{item.name}</p>
-                      <p className="text-sm text-muted">
-                        {item.dose} {item.unit}
-                      </p>
-                    </div>
-                    <Badge tone={ui.tone}>{ui.label}</Badge>
-                    {!taken ? (
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="lime" onClick={() => mark(item, 'taken')}>
-                          <Check className="size-4" aria-hidden /> Tomada
-                        </Button>
-                        <Button size="sm" variant="ghost" onClick={() => mark(item, 'skipped')} aria-label={`Saltar ${item.name}`}>
-                          <SkipForward className="size-4" aria-hidden />
-                        </Button>
+                  <li key={`${item.medicationId}-${item.scheduledFor}`} className={clsx('relative overflow-hidden rounded-3xl p-4 pl-5 transition-colors duration-300', taken ? 'bg-ok/10' : 'bg-surface-2/70')}>
+                    <span className={clsx('absolute inset-y-0 left-0 w-1.5', taken ? 'bg-ok' : item.status === 'pending' ? 'bg-amber' : 'bg-line')} aria-hidden />
+                    <div className="flex items-start gap-3">
+                      <div className="grid shrink-0 place-items-center rounded-2xl bg-ink px-3 py-2 font-display text-lg font-bold tabular-nums text-bg">{formatTime(item.scheduledFor)}</div>
+                      <div className="min-w-0 flex-1">
+                        <p className={clsx('font-display text-[1.05rem] font-semibold leading-tight', taken && 'line-through opacity-60')}>{item.name}</p>
+                        <p className="mt-0.5 text-sm text-muted">
+                          {item.dose} {item.unit}
+                        </p>
                       </div>
-                    ) : (
-                      <Button size="sm" variant="ghost" onClick={() => mark(item, 'pending')}>
-                        Deshacer
-                      </Button>
-                    )}
+                      <Badge tone={ui.tone}>{ui.label}</Badge>
+                    </div>
+                    <div className="mt-3 flex gap-2">
+                      {!taken ? (
+                        <>
+                          <Button className="flex-1" variant="lime" onClick={() => mark(item, 'taken')}>
+                            <Check className="size-5" aria-hidden /> Tomada
+                          </Button>
+                          <Button variant="outline" className="!px-4" onClick={() => mark(item, 'skipped')} aria-label={`Saltar ${item.name}`}>
+                            <SkipForward className="size-5" aria-hidden />
+                          </Button>
+                        </>
+                      ) : (
+                        <Button className="flex-1" size="sm" variant="ghost" onClick={() => mark(item, 'pending')}>
+                          Deshacer
+                        </Button>
+                      )}
+                    </div>
                   </li>
                 )
               })}
@@ -136,14 +143,14 @@ export default function MedicationsPage() {
         </Card>
 
         <div className="space-y-5 lg:col-span-5">
-          <div className="rounded-3xl bg-brand p-6 text-brand-ink">
-            <p className="text-sm font-semibold opacity-85">Adherencia últimos 30 días</p>
-            <p className="mt-6 font-display text-6xl font-bold tabular-nums">{adherence.data ? percent(adherence.data.rate) : '--'}</p>
-            <p className="mt-2 text-sm opacity-85">{adherence.data ? `${adherence.data.taken} de ${adherence.data.total} dosis tomadas` : 'Calculando'}</p>
+          <div className="bg-hero relative overflow-hidden rounded-[2rem] p-5 text-white shadow-elev-3 sm:p-6">
+            <p className="text-sm font-semibold text-white/80">Adherencia últimos 30 días</p>
+            <p className="mt-4 font-display text-6xl font-bold tabular-nums tracking-tighter">{adherence.data ? percent(adherence.data.rate) : '--'}</p>
+            <p className="mt-1 text-sm text-white/75">{adherence.data ? `${adherence.data.taken} de ${adherence.data.total} dosis tomadas` : 'Calculando'}</p>
             {adherence.data?.byDay && (
-              <div className="mt-5 flex h-10 items-end gap-[3px]" aria-hidden>
+              <div className="mt-5 flex h-12 items-end gap-[3px]" aria-hidden>
                 {adherence.data.byDay.map((d) => (
-                  <span key={d.date} className="flex-1 rounded-sm bg-lime" style={{ height: `${Math.max(12, d.rate * 100)}%`, opacity: d.rate >= 1 ? 1 : 0.45 }} />
+                  <span key={d.date} className="flex-1 rounded-full bg-lime" style={{ height: `${Math.max(12, d.rate * 100)}%`, opacity: d.rate >= 1 ? 1 : 0.4 }} />
                 ))}
               </div>
             )}
@@ -156,21 +163,24 @@ export default function MedicationsPage() {
             ) : meds.error ? (
               <ErrorState compact error={meds.error} onRetry={meds.reload} />
             ) : (
-              <ul className="divide-y divide-line">
+              <ul className="space-y-2.5">
                 {meds.data?.map((m) => (
-                  <li key={m.id} className="flex items-center gap-3 py-3.5">
+                  <li key={m.id} className="flex items-center gap-3 rounded-2xl bg-surface-2/70 p-3">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
+                      <Pill className="size-5" aria-hidden />
+                    </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-semibold">{m.name}</p>
-                      <p className="text-sm text-muted">
+                      <p className="font-semibold leading-tight">{m.name}</p>
+                      <p className="mt-0.5 text-sm text-muted">
                         {m.dose} {m.unit} &middot; {m.scheduleTimes.join(', ')}
                       </p>
                     </div>
-                    <Button size="sm" variant="ghost" onClick={() => setEditing(m)} aria-label={`Editar ${m.name}`}>
-                      <Pencil className="size-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => remove(m)} aria-label={`Eliminar ${m.name}`}>
-                      <Trash2 className="size-4 text-coral" />
-                    </Button>
+                    <button type="button" onClick={() => setEditing(m)} aria-label={`Editar ${m.name}`} className="press grid size-11 place-items-center rounded-full text-muted">
+                      <Pencil className="size-5" />
+                    </button>
+                    <button type="button" onClick={() => setRemoving(m)} aria-label={`Eliminar ${m.name}`} className="press grid size-11 place-items-center rounded-full text-coral">
+                      <Trash2 className="size-5" />
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -178,6 +188,8 @@ export default function MedicationsPage() {
           </Card>
         </div>
       </div>
+
+      <ConfirmSheet open={removing !== null} title={`Eliminar ${removing?.name ?? ''}`} message="Esta acción no se puede deshacer. Dejarás de recibir recordatorios de este medicamento." onConfirm={() => (removing ? remove(removing) : undefined)} onCancel={() => setRemoving(null)} />
 
       <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing === 'new' ? 'Nuevo medicamento' : 'Editar medicamento'}>
         {editing !== null && <MedicationForm initial={editing === 'new' ? undefined : editing} onSubmit={save} onCancel={() => setEditing(null)} />}
