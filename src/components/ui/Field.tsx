@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({ l
           id={fid}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? `${fid}-err` : hint ? `${fid}-hint` : undefined}
-          className={clsx(control, 'h-12', error ? 'border-coral' : 'border-line', trailing && 'pr-12', className)}
+          className={clsx(control, 'h-14', error ? 'border-coral' : 'border-line', trailing && 'pr-12', className)}
           {...rest}
         />
         {trailing && <div className="absolute inset-y-0 right-2 flex items-center">{trailing}</div>}

@@ -27,8 +27,8 @@ export function Spinner({ label = 'Cargando' }: { label?: string }) {
 
 export function EmptyState({ icon, title, description, action }: { icon: ReactNode; title: string; description: string; action?: ReactNode }) {
   return (
-    <div className="flex flex-col items-center rounded-3xl border border-dashed border-line px-6 py-12 text-center">
-      <span className="mb-4 grid size-14 place-items-center rounded-2xl bg-brand-soft text-brand">{icon}</span>
+    <div className="flex flex-col items-center rounded-[1.75rem] border border-dashed border-line bg-surface/50 px-6 py-10 text-center">
+      <span className="mb-4 grid size-16 place-items-center rounded-[1.4rem] bg-brand-soft text-brand ring-8 ring-brand-soft/40">{icon}</span>
       <h3 className="font-display text-lg font-semibold">{title}</h3>
       <p className="mt-1 max-w-sm text-sm text-muted">{description}</p>
       {action && <div className="mt-5">{action}</div>}
@@ -41,7 +41,7 @@ export function ErrorState({ error, onRetry, compact }: { error: unknown; onRetr
   const message = error instanceof Error ? error.message : 'Algo salió mal.'
   const Icon = network ? WifiOff : AlertOctagon
   return (
-    <div role="alert" className={clsx('flex flex-col items-center rounded-3xl bg-coral-soft text-center', compact ? 'p-6' : 'px-6 py-12')}>
+    <div role="alert" className={clsx('flex flex-col items-center rounded-[1.75rem] bg-coral-soft text-center', compact ? 'p-6' : 'px-6 py-12')}>
       <Icon className="mb-3 size-8 text-coral" aria-hidden />
       <p className="font-display text-lg font-semibold text-ink">{network ? 'Sin conexión con el servidor' : 'No pudimos cargar esto'}</p>
       <p className="mt-1 max-w-md text-sm text-muted">{message}</p>
