@@ -68,7 +68,7 @@ export default function ReportPage() {
               <p className="text-xs text-muted sm:text-sm">Crisis en el periodo</p>
             </div>
             <div className="rounded-2xl bg-surface-2 p-3 sm:p-4">
-              <p className="font-display text-3xl font-bold sm:text-4xl">{report.data.adherence ? percent(report.data.adherence.rate) : '--'}</p>
+              <p className="font-display text-3xl font-bold sm:text-4xl">{report.data.adherence && report.data.adherence.total > 0 ? percent(report.data.adherence.rate) : '--'}</p>
               <p className="text-sm text-muted">Adherencia</p>
             </div>
             <div className="rounded-2xl bg-surface-2 p-3 sm:p-4">
@@ -79,6 +79,9 @@ export default function ReportPage() {
 
           <section className="mt-10">
             <h3 className="font-display text-xl font-semibold">Tratamiento actual</h3>
+            {report.data.medications.length === 0 ? (
+              <p className="mt-3 text-muted">No hay medicamentos registrados.</p>
+            ) : (
             <div className="-mx-1 overflow-x-auto px-1"><table className="mt-3 w-full min-w-[26rem] text-left text-sm">
               <thead>
                 <tr className="border-b border-line text-muted">
@@ -99,6 +102,7 @@ export default function ReportPage() {
                 ))}
               </tbody>
             </table></div>
+            )}
           </section>
 
           <section className="mt-10">

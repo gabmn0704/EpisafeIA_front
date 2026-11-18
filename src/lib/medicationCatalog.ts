@@ -3,6 +3,16 @@ import { Trie } from '@/lib/structures'
 /** Common antiseizure medications, used for instant local autocomplete before the API answers. */
 export const ANTISEIZURE_MEDICATIONS = [
   'Ácido valproico',
+  'Valproato de sodio',
+  'Valproato',
+  'Cannabidiol',
+  'Cenobamato',
+  'Eslicarbazepina',
+  'Felbamato',
+  'Rufinamida',
+  'Tiagabina',
+  'Lorazepam',
+  'Midazolam',
   'Brivaracetam',
   'Carbamazepina',
   'Clobazam',

@@ -31,8 +31,24 @@ const err = (status: number, code: string, message: string) => HttpResponse.json
 export function createHandlers() {
   const dailyLogs = buildDailyLogs()
   const seizures = buildSeizures(dailyLogs)
-  const meds: Medication[] = structuredClone(seedMeds)
-  const contacts: EmergencyContact[] = structuredClone(seedContacts)
+  // Una cuenta recién registrada (marca en sessionStorage) empieza sin medicamentos ni contactos.
+  const fresh = (() => {
+    try {
+      return globalThis.sessionStorage?.getItem('episafe.mock.fresh') === '1'
+    } catch {
+      return false
+    }
+  })()
+  const setFresh = (v: boolean) => {
+    try {
+      if (v) globalThis.sessionStorage?.setItem('episafe.mock.fresh', '1')
+      else globalThis.sessionStorage?.removeItem('episafe.mock.fresh')
+    } catch {
+      /* sin sessionStorage */
+    }
+  }
+  const meds: Medication[] = fresh ? [] : structuredClone(seedMeds)
+  const contacts: EmergencyContact[] = fresh ? [] : structuredClone(seedContacts)
   const doseStatus = new Map<string, DoseStatus>()
   const devices: WearableDevice[] = []
   const emergencies: EmergencyEvent[] = []
@@ -41,6 +57,14 @@ export function createHandlers() {
 
   const authed = (req: Request) => req.headers.get('Authorization')?.startsWith('Bearer ')
   const unauthorized = () => err(401, 'UNAUTHORIZED', 'Sesión no válida')
+
+  /** Adherencia derivada de los medicamentos activos: sin medicamentos no hay porcentaje que mostrar. */
+  const adherenceFor = (days: number) => {
+    const perDay = meds.filter((m) => m.active).reduce((n, m) => n + m.scheduleTimes.length, 0)
+    const total = days * perDay
+    const taken = Math.round(total * 0.94)
+    return { rate: total > 0 ? taken / total : 0, taken, total, days }
+  }
 
   const schedule = (): ScheduleItem[] => {
     const day = todayISO()
@@ -79,12 +103,19 @@ export function createHandlers() {
       if (body.email?.toLowerCase() !== demoUser.email || body.password !== DEMO_PASSWORD) {
         return err(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos.')
       }
+      setFresh(false)
+      meds.splice(0, meds.length, ...structuredClone(seedMeds))
+      contacts.splice(0, contacts.length, ...structuredClone(seedContacts))
       return HttpResponse.json({ user: demoUser, accessToken: 'mock-access', refreshToken: 'mock-refresh' })
     }),
     http.post(url('/auth/register'), async ({ request }) => {
       await delay(450)
       const body = (await request.json()) as { email: string; fullName: string }
       if (body.email.toLowerCase() === demoUser.email) return err(409, 'EMAIL_TAKEN', 'Ya existe una cuenta con ese correo.')
+      // Una cuenta nueva empieza sin medicamentos ni contactos: cada persona configura los suyos.
+      meds.splice(0, meds.length)
+      contacts.splice(0, contacts.length)
+      setFresh(true)
       return HttpResponse.json({ user: { ...demoUser, email: body.email, fullName: body.fullName }, accessToken: 'mock-access', refreshToken: 'mock-refresh' }, { status: 201 })
     }),
     http.post(url('/auth/refresh'), () => HttpResponse.json({ accessToken: 'mock-access', refreshToken: 'mock-refresh' })),
@@ -101,7 +132,7 @@ export function createHandlers() {
       const taken = rows.filter((r) => r.status === 'taken').length
       return HttpResponse.json({
         risk: riskToday,
-        adherence: { rate: 0.94, taken: 113, total: 120, days: 30 },
+        adherence: adherenceFor(30),
         lastSeizure: seizures[0] ?? null,
         seizureFreeDays: freeDays(),
         currentHeartRate: null,
@@ -152,11 +183,11 @@ export function createHandlers() {
     http.get(url('/medications/schedule/today'), () => HttpResponse.json(schedule())),
     http.get(url('/medications/adherence'), ({ request }) => {
       const days = Number(new URL(request.url).searchParams.get('days') ?? 30)
-      const byDay = Array.from({ length: days }, (_, i) => ({
+      const byDay = meds.length === 0 ? [] : Array.from({ length: days }, (_, i) => ({
         date: toISODate(addDays(new Date(), -(days - 1 - i))),
         rate: i % 9 === 4 ? 0.5 : 1,
       }))
-      return HttpResponse.json({ rate: 0.94, taken: Math.round(days * 3.7), total: days * 4, days, byDay })
+      return HttpResponse.json({ ...adherenceFor(days), byDay })
     }),
     http.post(url('/medications/logs'), async ({ request }) => {
       const b = (await request.json()) as { medicationId: string; scheduledFor: string; status: DoseStatus }
@@ -271,7 +302,7 @@ export function createHandlers() {
         generatedAt: new Date().toISOString(),
         seizures: seizures.filter((s) => s.startedAt.slice(0, 10) >= from && s.startedAt.slice(0, 10) <= to),
         medications: meds,
-        adherence: { rate: 0.94, taken: 113, total: 120, days: 30 },
+        adherence: adherenceFor(30),
         insights,
         stats: null,
       })

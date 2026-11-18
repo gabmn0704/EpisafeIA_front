@@ -145,14 +145,20 @@ export default function MedicationsPage() {
         <div className="space-y-5 lg:col-span-5">
           <div className="bg-hero relative overflow-hidden rounded-[2rem] p-5 text-white shadow-elev-3 sm:p-6">
             <p className="text-sm font-semibold text-white/80">Adherencia últimos 30 días</p>
-            <p className="mt-4 font-display text-6xl font-bold tabular-nums tracking-tighter">{adherence.data ? percent(adherence.data.rate) : '--'}</p>
-            <p className="mt-1 text-sm text-white/75">{adherence.data ? `${adherence.data.taken} de ${adherence.data.total} dosis tomadas` : 'Calculando'}</p>
-            {adherence.data?.byDay && (
-              <div className="mt-5 flex h-12 items-end gap-[3px]" aria-hidden>
-                {adherence.data.byDay.map((d) => (
-                  <span key={d.date} className="flex-1 rounded-full bg-lime" style={{ height: `${Math.max(12, d.rate * 100)}%`, opacity: d.rate >= 1 ? 1 : 0.4 }} />
-                ))}
-              </div>
+            {adherence.data && adherence.data.total > 0 ? (
+              <>
+                <p className="mt-4 font-display text-6xl font-bold tabular-nums tracking-tighter">{percent(adherence.data.rate)}</p>
+                <p className="mt-1 text-sm text-white/75">{`${adherence.data.taken} de ${adherence.data.total} dosis tomadas`}</p>
+                {adherence.data.byDay && adherence.data.byDay.length > 0 && (
+                  <div className="mt-5 flex h-12 items-end gap-[3px]" aria-hidden>
+                    {adherence.data.byDay.map((d) => (
+                      <span key={d.date} className="flex-1 rounded-full bg-lime" style={{ height: `${Math.max(12, d.rate * 100)}%`, opacity: d.rate >= 1 ? 1 : 0.4 }} />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="mt-4 text-base leading-snug text-white/85">{adherence.loading ? 'Calculando...' : 'Cuando agregues tus medicamentos y marques tus tomas, verás aquí tu adherencia.'}</p>
             )}
           </div>
 
@@ -162,6 +168,8 @@ export default function MedicationsPage() {
               <Skeleton className="h-32" />
             ) : meds.error ? (
               <ErrorState compact error={meds.error} onRetry={meds.reload} />
+            ) : (meds.data?.length ?? 0) === 0 ? (
+              <EmptyState icon={<Pill className="size-6" />} title="Aún no tienes medicamentos" description="Cada persona toma los suyos. Escribe el nombre de cualquier medicamento y sus horarios." action={<Button onClick={() => setEditing('new')}>Agregar mi primer medicamento</Button>} />
             ) : (
               <ul className="space-y-2.5">
                 {meds.data?.map((m) => (

@@ -50,7 +50,7 @@ export function relativeTime(iso: string, now = Date.now()): string {
 
 export const greeting = (hour = new Date().getHours()): string => (hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches')
 
-export const percent = (n: number, digits = 0): string => `${(n * 100).toFixed(digits)}%`
+export const percent = (n: number, digits = 0): string => (Number.isFinite(n) ? `${(n * 100).toFixed(digits)}%` : '--')
 
 export const riskLabel: Record<string, string> = { low: 'Bajo', moderate: 'Moderado', high: 'Alto', critical: 'Crítico' }
 
