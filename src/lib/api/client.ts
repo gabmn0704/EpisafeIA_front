@@ -19,6 +19,9 @@ export class ApiError extends Error {
   }
 }
 
+/** Margen amplio para tolerar el arranque en frío del backend gratuito. */
+const REQUEST_TIMEOUT_MS = 60_000
+
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
   body?: unknown
@@ -87,16 +90,26 @@ async function send(path: string, opts: RequestOptions, token: string | null): P
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (opts.body !== undefined) headers['Content-Type'] = 'application/json'
   if (token) headers.Authorization = `Bearer ${token}`
+  // Tiempo máximo por petición: el servidor gratuito puede estar despertando.
+  const timeout = new AbortController()
+  const timer = setTimeout(() => timeout.abort(), REQUEST_TIMEOUT_MS)
+  const external = opts.signal
+  const onExternalAbort = () => timeout.abort()
+  external?.addEventListener('abort', onExternalAbort)
   try {
     return await fetch(buildUrl(path, opts.query), {
       method: opts.method ?? 'GET',
       headers,
       body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
-      signal: opts.signal,
+      signal: timeout.signal,
     })
   } catch (e) {
-    if (e instanceof DOMException && e.name === 'AbortError') throw e
+    if (external?.aborted) throw e
+    if (timeout.signal.aborted) throw new ApiError(0, 'NETWORK_ERROR', 'El servidor está tardando en responder. Inténtalo de nuevo en un momento.')
     throw new ApiError(0, 'NETWORK_ERROR', 'No pudimos conectar con el servidor. Revisa tu conexión e intenta de nuevo.')
+  } finally {
+    clearTimeout(timer)
+    external?.removeEventListener('abort', onExternalAbort)
   }
 }
 
