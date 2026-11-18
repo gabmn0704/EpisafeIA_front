@@ -32,36 +32,53 @@ export function WatchPanel({ monitor }: { monitor: HeartRateMonitor }) {
 
   return (
     <Card>
-      <div className="flex flex-wrap items-start justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-4">
           <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand-soft text-brand">
             <Bluetooth className="size-6" />
           </span>
           <div>
-            <h2 className="font-display text-xl font-semibold">Reloj o banda por Bluetooth</h2>
+            <h2 className="font-display text-lg font-semibold leading-tight sm:text-xl">Reloj o banda por Bluetooth</h2>
             <p className="text-sm text-muted">Cualquier dispositivo con el servicio estándar de pulso cardíaco (0x180D).</p>
           </div>
         </div>
         {live ? (
-          <Button variant="outline" onClick={monitor.disconnect}>
+          <Button variant="outline" className="w-full sm:w-auto" onClick={monitor.disconnect}>
             <Unplug className="size-4" aria-hidden /> Desconectar
           </Button>
         ) : (
-          <Button onClick={monitor.connect} loading={status === 'connecting'}>
+          <Button size="lg" className="w-full sm:w-auto" onClick={monitor.connect} loading={status === 'connecting'}>
             <Bluetooth className="size-4" aria-hidden /> {status === 'error' ? 'Reintentar conexión' : 'Conectar dispositivo'}
           </Button>
         )}
       </div>
 
       {status === 'idle' && (
-        <div className="mt-6 rounded-2xl bg-surface-2 p-6">
-          <p className="font-semibold">Aún no hay un dispositivo conectado</p>
-          <ol className="mt-3 list-decimal space-y-1.5 pl-5 text-sm text-muted">
-            <li>Activa Bluetooth en tu computador o teléfono Android.</li>
-            <li>En tu reloj, activa la transmisión de pulso (a veces se llama &quot;Broadcast heart rate&quot;).</li>
-            <li>Pulsa Conectar dispositivo y elige tu reloj en la lista.</li>
+        <div className="mt-6 overflow-hidden rounded-[1.5rem] bg-surface-2 p-5 sm:p-6">
+          <div className="relative mx-auto mb-5 grid size-32 place-items-center" aria-hidden>
+            <span className="absolute inset-0 animate-[pulse-ring_2.6s_ease-out_infinite] rounded-full bg-brand/25" />
+            <span className="absolute inset-0 animate-[pulse-ring_2.6s_ease-out_1.1s_infinite] rounded-full bg-brand/20" />
+            <svg viewBox="0 0 64 64" className="relative size-24">
+              <rect x="22" y="2" width="20" height="12" rx="4" fill="var(--line)" />
+              <rect x="22" y="50" width="20" height="12" rx="4" fill="var(--line)" />
+              <rect x="12" y="12" width="40" height="40" rx="12" fill="var(--brand)" />
+              <path d="M17 33h8l3-7 5 13 3-8 2 2h9" fill="none" stroke="var(--lime)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <p className="text-center font-display text-lg font-semibold">Aún no hay un dispositivo conectado</p>
+          <ol className="mt-4 space-y-3 text-sm">
+            {[
+              'Activa Bluetooth en tu computador o teléfono Android.',
+              'En tu reloj, activa la transmisión de pulso (a veces se llama "Broadcast heart rate").',
+              'Pulsa Conectar dispositivo y elige tu reloj en la lista.',
+            ].map((t, i) => (
+              <li key={t} className="flex items-start gap-3">
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand font-display text-sm font-bold text-brand-ink">{i + 1}</span>
+                <span className="pt-0.5 text-muted">{t}</span>
+              </li>
+            ))}
           </ol>
-          <p className="mt-4 text-sm text-muted">No mostramos datos hasta que tu dispositivo envíe mediciones reales.</p>
+          <p className="mt-4 text-center text-sm text-muted">No mostramos datos hasta que tu dispositivo envíe mediciones reales.</p>
         </div>
       )}
 
