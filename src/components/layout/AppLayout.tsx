@@ -210,7 +210,7 @@ export function AppLayout() {
         <div className="lg:pl-72 print:pl-0">
           <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-line/70 bg-bg/80 px-4 pb-2 pt-[max(0.5rem,env(safe-area-inset-top))] backdrop-blur-2xl sm:px-8 lg:h-16 lg:py-0">
             <Link to="/app" aria-label="EpiSafe IA, ir al resumen" className="press flex items-center gap-2 lg:hidden">
-              <LogoMark className="size-9" />
+              <LogoMark className="size-10" />
               <span className="font-display text-lg font-bold tracking-tight">
                 EpiSafe<span className="text-brand"> IA</span>
               </span>

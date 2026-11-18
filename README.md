@@ -14,7 +14,7 @@ Aplicación web de **EpiSafe IA**, sistema inteligente de prevención y asistenc
   - Emergencia: un toque, cuenta regresiva de 5 s para cancelar, geolocalización y estado de notificaciones.
   - Insights de IA con la evidencia (n, intervalo de Wilson, aumento de riesgo).
   - Contactos de emergencia, informe médico imprimible (Imprimir > Guardar como PDF) y dispositivos.
-- **Reloj inteligente (Web Bluetooth)**: hook `useHeartRateMonitor` con el servicio estándar `heart_rate` (0x180D) y la característica `heart_rate_measurement` (0x2A37). Parsea banderas de 8/16 bits, gasto energético e intervalos RR, calcula RMSSD, reconecta con backoff, usa un buffer circular propio y envía lotes (máx. 200) a `POST /wearables/samples`. **Nunca simula datos**: sin dispositivo o sin soporte del navegador muestra mensajes claros. Fitbit, Google Health y Apple Health aparecen como "próximamente".
+- **Reloj (próximamente)**: la pantalla muestra una tarjeta "Próximamente"; no se solicita Bluetooth. (Antes: **Web Bluetooth**): hook `useHeartRateMonitor` con el servicio estándar `heart_rate` (0x180D) y la característica `heart_rate_measurement` (0x2A37). Parsea banderas de 8/16 bits, gasto energético e intervalos RR, calcula RMSSD, reconecta con backoff, usa un buffer circular propio y envía lotes (máx. 200) a `POST /wearables/samples`. **Nunca simula datos**: sin dispositivo o sin soporte del navegador muestra mensajes claros. Fitbit, Google Health y Apple Health aparecen como "próximamente".
 
 ## Estructuras de datos propias (`src/lib/structures`)
 
@@ -77,7 +77,6 @@ Los mocks **solo** funcionan con `npm run dev` y también se usan en las pruebas
 Notas:
 
 - La CSP permite `connect-src https:` para que la web hable con tu API en otro dominio. Si quieres restringirla, reemplaza `https:` por el origen exacto de tu API en `vercel.json`.
-- Web Bluetooth requiere HTTPS (Vercel lo da por defecto) y un navegador basado en Chromium (Chrome, Edge u Opera). Safari y Firefox no lo soportan.
 - El flujo SSE de alertas usa `?token=` por limitación de `EventSource`; en producción usa siempre HTTPS.
 
 ## Estructura
@@ -96,3 +95,12 @@ src/
 ## Aviso
 
 EpiSafe IA es una herramienta de apoyo. No diagnostica ni cambia dosis, y no reemplaza la atención médica. Ante una emergencia, llama a tu número local de emergencias.
+
+
+## Logo y marca
+
+El logo (escudo con pulso) vive en `public/logo.svg` y es la fuente única; reutilízalo tal cual en la app móvil. Los iconos PWA (192, 512, maskable, apple-touch) se regeneran con `node scripts/generate-icons.mjs` a partir de `public/icon.svg` y `public/icon-maskable.svg` (requiere Chrome, Edge o Chromium instalado).
+
+## Servidor dormido (arranque en frío)
+
+Al cargar, la app hace ping a `/health` con reintentos hasta 90 s y muestra "Despertando el servidor…" con progreso; el login espera a que responda antes de enviar.
