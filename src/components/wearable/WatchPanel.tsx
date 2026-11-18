@@ -55,10 +55,10 @@ export function WatchPanel({ monitor }: { monitor: HeartRateMonitor }) {
 
       {status === 'idle' && (
         <div className="mt-6 overflow-hidden rounded-[1.5rem] bg-surface-2 p-5 sm:p-6">
-          <div className="relative mx-auto mb-5 grid size-32 place-items-center" aria-hidden>
+          <div className="relative mx-auto mb-6 mt-6 grid size-28 place-items-center" aria-hidden>
             <span className="absolute inset-0 animate-[pulse-ring_2.6s_ease-out_infinite] rounded-full bg-brand/25" />
             <span className="absolute inset-0 animate-[pulse-ring_2.6s_ease-out_1.1s_infinite] rounded-full bg-brand/20" />
-            <svg viewBox="0 0 64 64" className="relative size-24">
+            <svg viewBox="0 0 64 64" className="relative size-20">
               <rect x="22" y="2" width="20" height="12" rx="4" fill="var(--line)" />
               <rect x="22" y="50" width="20" height="12" rx="4" fill="var(--line)" />
               <rect x="12" y="12" width="40" height="40" rx="12" fill="var(--brand)" />
