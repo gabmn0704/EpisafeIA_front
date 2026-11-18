@@ -6,7 +6,7 @@ import { Logo } from '@/components/ui/Logo'
 
 function PulseLine() {
   return (
-    <svg viewBox="0 0 600 120" className="w-full" fill="none" aria-hidden>
+    <svg viewBox="0 0 600 120" className="h-14 w-full lg:h-auto" fill="none" aria-hidden>
       <motion.path
         d="M0 70h120l24-46 36 92 30-62 24 16h90l22-40 30 70 26-30h198"
         stroke="#C6FF3D"
@@ -44,19 +44,37 @@ export function AuthShell({ title, subtitle, children, footer }: { title: string
         </p>
       </aside>
 
-      <main className="flex flex-col px-5 py-8 sm:px-12">
-        <div className="mb-10 flex items-center justify-between">
-          <Link to="/" className="lg:hidden" aria-label="Volver al inicio">
-            <Logo />
-          </Link>
-          <Link to="/" className="ml-auto inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-ink">
+      <main className="flex min-h-dvh flex-col lg:min-h-0 lg:px-12 lg:py-8">
+        <header className="bg-hero grain relative overflow-hidden px-5 pb-12 pt-[max(1.25rem,env(safe-area-inset-top))] text-white lg:hidden">
+          <div className="relative flex items-center justify-between">
+            <Link to="/" aria-label="Volver al inicio" className="press">
+              <Logo tone="light" />
+            </Link>
+            <Link to="/" className="press inline-flex min-h-11 items-center gap-1.5 text-sm font-medium text-white/80">
+              <ArrowLeft className="size-4" aria-hidden /> Inicio
+            </Link>
+          </div>
+          <div className="relative mt-5 opacity-90">
+            <PulseLine />
+          </div>
+          <p className="relative mt-1 font-display text-2xl font-semibold leading-tight text-balance">
+            Anticípate a la crisis. <span className="text-lime">Vive con más calma.</span>
+          </p>
+        </header>
+        <div className="mb-10 hidden items-center justify-end lg:flex">
+          <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium text-muted hover:text-ink">
             <ArrowLeft className="size-4" aria-hidden /> Volver al inicio
           </Link>
         </div>
-        <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }} className="m-auto w-full max-w-md py-6">
-          <h1 className="font-display text-4xl font-semibold tracking-tight">{title}</h1>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="relative -mt-6 flex-1 rounded-t-[2rem] bg-bg px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-7 lg:m-auto lg:mt-0 lg:w-full lg:max-w-md lg:flex-none lg:rounded-none lg:px-0 lg:py-6"
+        >
+          <h1 className="font-display text-[2rem] font-bold leading-tight tracking-tight">{title}</h1>
           <p className="mt-2 text-muted">{subtitle}</p>
-          <div className="mt-8">{children}</div>
+          <div className="mt-7">{children}</div>
           <div className="mt-8 text-center text-sm text-muted">{footer}</div>
         </motion.div>
       </main>
