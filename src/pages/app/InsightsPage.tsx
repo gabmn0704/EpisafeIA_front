@@ -14,6 +14,8 @@ import { useToast } from '@/providers/ToastProvider'
 
 const kindLabel: Record<string, string> = { sleep: 'Sueño', adherence: 'Medicación', stress: 'Estrés', caffeine: 'Cafeína', alcohol: 'Alcohol', exercise: 'Ejercicio' }
 
+const accent: Record<string, string> = { sleep: 'bg-brand', adherence: 'bg-ok', stress: 'bg-coral', caffeine: 'bg-amber', alcohol: 'bg-cyan', exercise: 'bg-lime' }
+
 export default function InsightsPage() {
   const toast = useToast()
   const insights = useQuery(() => aiApi.insights())
@@ -57,18 +59,18 @@ export default function InsightsPage() {
       ) : !lead ? (
         <EmptyState icon={<Brain className="size-6" />} title="Todavía no hay patrones" description="La IA necesita al menos 3 crisis y unos días de registro para encontrar relaciones confiables. Sigue registrando tu día." />
       ) : (
-        <div className="grid grid-flow-dense gap-5 lg:grid-cols-2">
-          <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative overflow-hidden rounded-[2rem] bg-[radial-gradient(100%_100%_at_0%_0%,#6a3cff_0%,#2a14a3_60%,#150c4d_100%)] p-8 text-white lg:col-span-2 lg:p-12">
+        <div className="grid grid-flow-dense gap-4 sm:gap-5 lg:grid-cols-2">
+          <motion.article initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="relative overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-8 lg:col-span-2 lg:p-12">
             <div className="pointer-events-none absolute -right-10 -top-10 size-72 rounded-full bg-lime/25 blur-[90px]" />
             <div className="relative grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
               <div>
                 <Badge tone="lime">
                   <Sparkles className="size-3.5" aria-hidden /> Hallazgo principal
                 </Badge>
-                <h2 className="mt-5 font-display text-3xl font-semibold leading-tight tracking-tight text-balance sm:text-5xl">{lead.title}</h2>
-                <p className="mt-4 max-w-2xl text-lg text-white/80">{lead.body}</p>
+                <h2 className="mt-5 font-display text-[1.75rem] font-bold leading-[1.1] tracking-tight text-balance sm:text-5xl">{lead.title}</h2>
+                <p className="mt-3 max-w-2xl text-base text-white/80 sm:text-lg">{lead.body}</p>
               </div>
-              <div className="rounded-3xl bg-white/10 p-6 text-white [&_.text-muted]:text-white/70 [&_.text-ink]:text-white [&_.bg-surface-2]:bg-white/15">
+              <div className="rounded-3xl bg-white/10 p-4 text-white sm:p-6 [&_.text-muted]:text-white/70 [&_.text-ink]:text-white [&_.bg-surface-2]:bg-white/15">
                 <EvidenceBar evidence={lead.evidence} />
               </div>
             </div>
@@ -76,12 +78,13 @@ export default function InsightsPage() {
 
           {rest.map((i, idx) => (
             <motion.div key={i.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 * (idx + 1) }}>
-              <Card className="h-full">
+              <Card className="relative h-full overflow-hidden">
+                <span className={`absolute inset-x-0 top-0 h-1.5 ${accent[i.kind] ?? 'bg-brand'}`} aria-hidden />
                 <div className="flex items-center justify-between">
                   <Badge tone="brand">{kindLabel[i.kind] ?? 'Patrón'}</Badge>
                   {i.confidence !== undefined && <span className="text-xs font-semibold text-muted">Confianza {Math.round(i.confidence * 100)}%</span>}
                 </div>
-                <h3 className="mt-4 font-display text-2xl font-semibold leading-snug text-balance">{i.title}</h3>
+                <h3 className="mt-4 font-display text-[1.35rem] font-semibold leading-snug text-balance">{i.title}</h3>
                 <p className="mt-3 text-muted">{i.body}</p>
                 <EvidenceBar evidence={i.evidence} />
                 <p className="mt-5 text-xs text-muted">Detectado el {formatDate(i.createdAt)}</p>

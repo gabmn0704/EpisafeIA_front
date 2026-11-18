@@ -50,13 +50,20 @@ export function relativeTime(iso: string, now = Date.now()): string {
 
 export const greeting = (hour = new Date().getHours()): string => (hour < 12 ? 'Buenos días' : hour < 19 ? 'Buenas tardes' : 'Buenas noches')
 
-export const percent = (n: number, digits = 0): string => `${(n * 100).toFixed(digits)}%`
+export const percent = (n: number, digits = 0): string => (Number.isFinite(n) ? `${(n * 100).toFixed(digits)}%` : '--')
 
 export const riskLabel: Record<string, string> = { low: 'Bajo', moderate: 'Moderado', high: 'Alto', critical: 'Crítico' }
 
 export const riskColor: Record<string, string> = {
-  low: 'var(--ok)',
-  moderate: 'var(--amber)',
-  high: 'var(--coral)',
-  critical: '#d0003c',
+  low: 'var(--risk-low)',
+  moderate: 'var(--risk-moderate)',
+  high: 'var(--risk-high)',
+  critical: 'var(--risk-critical)',
+}
+
+export const riskSoft: Record<string, string> = {
+  low: 'var(--risk-low-soft)',
+  moderate: 'var(--risk-moderate-soft)',
+  high: 'var(--risk-high-soft)',
+  critical: 'var(--risk-critical-soft)',
 }

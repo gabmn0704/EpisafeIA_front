@@ -27,6 +27,7 @@ function Slider({
   hint,
   onChange,
   error,
+  tone = 'bg-brand-soft text-brand',
 }: {
   id: string
   label: string
@@ -39,13 +40,14 @@ function Slider({
   hint?: string
   onChange: (n: number) => void
   error?: string
+  tone?: string
 }) {
   const pct = ((value - min) / (max - min)) * 100
   return (
-    <div className="rounded-3xl border border-line bg-surface p-5">
+    <div className="rounded-[1.75rem] border border-line/70 bg-surface p-4 shadow-elev-1 sm:p-5">
       <div className="flex items-center justify-between">
         <label htmlFor={id} className="flex items-center gap-3 font-semibold">
-          <span className="grid size-10 place-items-center rounded-2xl bg-brand-soft text-brand">{icon}</span>
+          <span className={clsx('grid size-11 shrink-0 place-items-center rounded-2xl', tone)}>{icon}</span>
           {label}
         </label>
         <p className="font-display text-3xl font-bold tabular-nums">
@@ -63,7 +65,7 @@ function Slider({
         onChange={(e) => onChange(Number(e.target.value))}
         aria-invalid={error ? true : undefined}
         style={{ background: `linear-gradient(90deg, var(--brand) ${pct}%, var(--surface-2) ${pct}%)` }}
-        className="mt-5 h-3 w-full cursor-pointer appearance-none rounded-full accent-[var(--lime)] [&::-moz-range-thumb]:size-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:border-brand [&::-moz-range-thumb]:bg-lime [&::-webkit-slider-thumb]:size-6 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-brand [&::-webkit-slider-thumb]:bg-lime"
+        className="mt-5 h-3 w-full touch-pan-y cursor-pointer appearance-none rounded-full accent-[var(--lime)] [&::-moz-range-thumb]:size-7 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-4 [&::-moz-range-thumb]:border-brand [&::-moz-range-thumb]:bg-lime [&::-webkit-slider-thumb]:size-7 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-4 [&::-webkit-slider-thumb]:border-brand [&::-webkit-slider-thumb]:bg-lime"
       />
       {hint && <p className="mt-3 text-sm text-muted">{hint}</p>}
       {error && (
@@ -76,11 +78,11 @@ function Slider({
 }
 
 const moods = [
-  { v: 1, label: 'Muy mal', Icon: Frown },
-  { v: 2, label: 'Mal', Icon: Annoyed },
-  { v: 3, label: 'Normal', Icon: Meh },
-  { v: 4, label: 'Bien', Icon: Smile },
-  { v: 5, label: 'Excelente', Icon: SmilePlus },
+  { v: 1, label: 'Muy mal', Icon: Frown, on: 'bg-risk-critical text-white' },
+  { v: 2, label: 'Mal', Icon: Annoyed, on: 'bg-coral text-white' },
+  { v: 3, label: 'Normal', Icon: Meh, on: 'bg-amber text-lime-ink' },
+  { v: 4, label: 'Bien', Icon: Smile, on: 'bg-cyan text-lime-ink' },
+  { v: 5, label: 'Excelente', Icon: SmilePlus, on: 'bg-ok text-white' },
 ]
 
 export default function DailyLogPage() {
@@ -172,12 +174,12 @@ export default function DailyLogPage() {
         title="Registro diario"
         description="Cuatro datos al día bastan para que la IA encuentre tus patrones."
         actions={
-          <div className="flex items-center gap-2 rounded-full border border-line bg-surface p-1">
-            <Button variant="ghost" size="sm" onClick={() => shift(-1)} aria-label="Día anterior">
+          <div className="flex w-full items-center justify-between gap-1 rounded-full bg-surface p-1 shadow-elev-1 sm:w-auto">
+            <Button variant="ghost" size="sm" className="!size-11 !p-0" onClick={() => shift(-1)} aria-label="Día anterior">
               &larr;
             </Button>
-            <span className="min-w-36 text-center text-sm font-semibold capitalize">{isToday ? 'Hoy' : formatDate(date, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-            <Button variant="ghost" size="sm" onClick={() => shift(1)} disabled={isToday} aria-label="Día siguiente">
+            <span className="min-w-32 flex-1 text-center font-display text-base font-semibold capitalize">{isToday ? 'Hoy' : formatDate(date, { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+            <Button variant="ghost" size="sm" className="!size-11 !p-0" onClick={() => shift(1)} disabled={isToday} aria-label="Día siguiente">
               &rarr;
             </Button>
           </div>
@@ -193,25 +195,25 @@ export default function DailyLogPage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-flow-dense gap-5 lg:grid-cols-6">
+        <div className="grid grid-flow-dense gap-3 sm:gap-5 lg:grid-cols-6">
           <div className="lg:col-span-3">
-            <Slider id="sleep" label="Sueño de anoche" icon={<Moon className="size-5" />} value={v.sleepHours} min={0} max={14} step={0.5} unit="h" hint={v.sleepHours < 5 ? 'Menos de 5 horas es tu mayor factor de riesgo.' : 'Dormir 7 horas o más protege tu cerebro.'} onChange={(n) => patch({ sleepHours: n })} error={errors.sleepHours} />
+            <Slider id="sleep" label="Sueño de anoche" tone="bg-brand-soft text-brand" icon={<Moon className="size-5" />} value={v.sleepHours} min={0} max={14} step={0.5} unit="h" hint={v.sleepHours < 5 ? 'Menos de 5 horas es tu mayor factor de riesgo.' : 'Dormir 7 horas o más protege tu cerebro.'} onChange={(n) => patch({ sleepHours: n })} error={errors.sleepHours} />
           </div>
           <div className="lg:col-span-3">
-            <Slider id="stress" label="Estrés" icon={<Zap className="size-5" />} value={v.stressLevel} min={1} max={10} step={1} unit="/10" hint="1 es calma total, 10 es el día más tenso." onChange={(n) => patch({ stressLevel: n })} error={errors.stressLevel} />
+            <Slider id="stress" label="Estrés" tone="bg-coral-soft text-coral" icon={<Zap className="size-5" />} value={v.stressLevel} min={1} max={10} step={1} unit="/10" hint="1 es calma total, 10 es el día más tenso." onChange={(n) => patch({ stressLevel: n })} error={errors.stressLevel} />
           </div>
           <div className="lg:col-span-3">
-            <Slider id="caffeine" label="Cafeína" icon={<Coffee className="size-5" />} value={v.caffeineMg} min={0} max={600} step={30} unit="mg" hint="Una taza de café suele tener cerca de 90 mg." onChange={(n) => patch({ caffeineMg: n })} error={errors.caffeineMg} />
+            <Slider id="caffeine" label="Cafeína" tone="bg-amber/25 text-ink" icon={<Coffee className="size-5" />} value={v.caffeineMg} min={0} max={600} step={30} unit="mg" hint="Una taza de café suele tener cerca de 90 mg." onChange={(n) => patch({ caffeineMg: n })} error={errors.caffeineMg} />
           </div>
           <div className="lg:col-span-3">
-            <Slider id="exercise" label="Ejercicio" icon={<Dumbbell className="size-5" />} value={v.exerciseMinutes} min={0} max={180} step={5} unit="min" hint="Caminar también cuenta." onChange={(n) => patch({ exerciseMinutes: n })} error={errors.exerciseMinutes} />
+            <Slider id="exercise" label="Ejercicio" tone="bg-ok/15 text-ok" icon={<Dumbbell className="size-5" />} value={v.exerciseMinutes} min={0} max={180} step={5} unit="min" hint="Caminar también cuenta." onChange={(n) => patch({ exerciseMinutes: n })} error={errors.exerciseMinutes} />
           </div>
 
           <Card className="lg:col-span-6">
             <fieldset>
               <legend className="mb-4 font-display text-lg font-semibold">¿Cómo te sientes hoy?</legend>
               <div className="grid grid-cols-5 gap-2 sm:gap-3">
-                {moods.map(({ v: mv, label, Icon }) => {
+                {moods.map(({ v: mv, label, Icon, on }) => {
                   const active = v.mood === mv
                   return (
                     <button
@@ -220,8 +222,8 @@ export default function DailyLogPage() {
                       aria-pressed={active}
                       onClick={() => patch({ mood: mv })}
                       className={clsx(
-                        'flex flex-col items-center gap-2 rounded-2xl border-2 px-1 py-4 text-xs font-semibold transition active:scale-95 sm:text-sm',
-                        active ? 'border-brand bg-brand text-brand-ink shadow-[0_10px_24px_-10px_var(--brand)]' : 'border-line bg-surface text-muted hover:border-brand hover:text-ink',
+                        'press flex min-h-[4.75rem] flex-col items-center justify-center gap-1.5 rounded-2xl px-0.5 text-[0.7rem] font-semibold sm:text-sm',
+                        active ? [on, '-translate-y-0.5 shadow-elev-2'] : 'bg-surface-2 text-muted',
                       )}
                     >
                       <Icon className="size-7" aria-hidden />
@@ -236,12 +238,12 @@ export default function DailyLogPage() {
             </div>
           </Card>
 
-          <div className="flex flex-wrap items-center justify-between gap-4 lg:col-span-6">
-            <Button variant="outline" onClick={() => undo()} disabled={!form.canUndo} aria-label="Deshacer último cambio">
+          <div className="sticky bottom-[calc(var(--tabbar-h)+env(safe-area-inset-bottom)+2.75rem)] z-20 flex items-center justify-between gap-3 rounded-full bg-surface/90 p-2 shadow-elev-3 backdrop-blur-xl lg:static lg:col-span-6 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none">
+            <Button variant="ghost" onClick={() => undo()} disabled={!form.canUndo} aria-label="Deshacer último cambio">
               <Undo2 className="size-4" aria-hidden /> Deshacer {form.canUndo && <span className="text-muted">({form.depth})</span>}
             </Button>
-            <Button size="lg" onClick={onSave} loading={saving}>
-              {existing ? 'Actualizar registro' : 'Guardar registro'}
+            <Button size="lg" className="flex-1 whitespace-nowrap lg:flex-none" variant="lime" onClick={onSave} loading={saving}>
+              {existing ? "Actualizar" : "Guardar registro"}
             </Button>
           </div>
         </div>

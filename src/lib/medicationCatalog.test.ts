@@ -10,3 +10,11 @@ describe('medicationTrie', () => {
     expect(medicationTrie().search('fenito')).toEqual(['Fenitoína'])
   })
 })
+
+describe('catalog coverage', () => {
+  it('suggests the common antiseizure drugs', async () => {
+    const { ANTISEIZURE_MEDICATIONS } = await import('./medicationCatalog')
+    const all = ANTISEIZURE_MEDICATIONS.join(' ').toLowerCase()
+    for (const n of ['levetiracetam', 'valproato', 'lamotrigina', 'carbamazepina']) expect(all).toContain(n)
+  })
+})

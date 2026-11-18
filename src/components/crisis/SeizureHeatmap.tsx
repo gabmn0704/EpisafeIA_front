@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import clsx from 'clsx'
 import type { Seizure } from '@/lib/api/types'
 import { formatDate } from '@/lib/format'
@@ -10,10 +10,15 @@ const dayLabels = ['L', '', 'M', '', 'V', '', 'D']
 export function SeizureHeatmap({ seizures, weeks = 20, onSelect }: { seizures: Seizure[]; weeks?: number; onSelect?: (date: string) => void }) {
   const grid = useMemo(() => buildHeatmap(seizures, weeks), [seizures, weeks])
   const total = seizures.length
+  const scroller = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = scroller.current
+    if (el) el.scrollLeft = el.scrollWidth
+  }, [grid])
 
   return (
     <div>
-      <div className="overflow-x-auto pb-2 scrollbar-thin">
+      <div ref={scroller} className="no-scrollbar overflow-x-auto pb-2">
         <div className="flex min-w-max gap-2" role="grid" aria-label={`Calendario de crisis de las últimas ${weeks} semanas, ${total} en total`}>
           <div className="flex flex-col gap-[5px] pt-0.5 text-[11px] font-semibold text-muted" aria-hidden>
             {dayLabels.map((l, i) => (

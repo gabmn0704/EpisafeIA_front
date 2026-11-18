@@ -39,7 +39,7 @@ export function FinalCta() {
           <a href="#funciones" className="hover:text-ink">Funciones</a>
           <a href="#seguridad" className="hover:text-ink">Seguridad</a>
         </nav>
-        <p className="max-w-xs text-center sm:text-right">EpiSafe IA no reemplaza la atención médica. Ante una emergencia, llama a tu número local de emergencias.</p>
+        <p className="max-w-xs text-center sm:text-right">EpiSafe IA no reemplaza la atención médica. Ante una emergencia, EpiSafe te lleva a llamar o escribir a tus propios contactos.</p>
       </footer>
     </section>
   )

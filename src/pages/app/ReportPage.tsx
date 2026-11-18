@@ -27,9 +27,9 @@ export default function ReportPage() {
         description="Un resumen listo para llevar a tu consulta. Usa Imprimir y elige Guardar como PDF."
         actions={
           <>
-            <div className="flex rounded-full border border-line bg-surface p-1" role="group" aria-label="Periodo del informe">
+            <div className="flex w-full rounded-full bg-surface p-1 shadow-elev-1 sm:w-auto" role="group" aria-label="Periodo del informe">
               {ranges.map((r) => (
-                <button key={r.days} type="button" aria-pressed={days === r.days} onClick={() => setDays(r.days)} className={clsx('rounded-full px-4 py-1.5 text-sm font-semibold transition', days === r.days ? 'bg-brand text-brand-ink' : 'text-muted hover:text-ink')}>
+                <button key={r.days} type="button" aria-pressed={days === r.days} onClick={() => setDays(r.days)} className={clsx('press min-h-11 flex-1 rounded-full px-4 text-sm font-semibold sm:flex-none', days === r.days ? 'bg-brand text-brand-ink' : 'text-muted hover:text-ink')}>
                   {r.label}
                 </button>
               ))}
@@ -46,13 +46,13 @@ export default function ReportPage() {
       ) : report.loading || !report.data ? (
         <Skeleton className="h-[40rem]" />
       ) : (
-        <article className="print-sheet mx-auto max-w-4xl rounded-3xl border border-line bg-surface p-8 shadow-card sm:p-12" aria-label="Informe médico">
+        <article className="print-sheet mx-auto max-w-4xl rounded-[1.75rem] border border-line/70 bg-surface p-5 shadow-elev-1 sm:p-12" aria-label="Informe médico">
           <header className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-ink pb-6">
             <div>
-              <p className="font-display text-sm font-bold uppercase tracking-widest text-brand">EpiSafe IA</p>
-              <h2 className="mt-1 font-display text-3xl font-bold">Resumen clínico del paciente</h2>
+              <p className="font-display text-sm font-bold text-brand">EpiSafe IA</p>
+              <h2 className="mt-1 font-display text-2xl font-bold sm:text-3xl">Resumen clínico del paciente</h2>
             </div>
-            <div className="text-right text-sm">
+            <div className="text-sm sm:text-right">
               <p className="font-semibold">{report.data.patient.fullName}</p>
               {report.data.patient.birthDate && <p className="text-muted">Nacimiento: {formatDate(report.data.patient.birthDate)}</p>}
               <p className="text-muted">
@@ -62,24 +62,27 @@ export default function ReportPage() {
             </div>
           </header>
 
-          <section className="mt-8 grid grid-cols-3 gap-4 text-center">
-            <div className="rounded-2xl bg-surface-2 p-4">
-              <p className="font-display text-4xl font-bold">{report.data.seizures.length}</p>
-              <p className="text-sm text-muted">Crisis en el periodo</p>
+          <section className="mt-6 grid grid-cols-3 gap-2 text-center sm:mt-8 sm:gap-4">
+            <div className="rounded-2xl bg-surface-2 p-3 sm:p-4">
+              <p className="font-display text-3xl font-bold sm:text-4xl">{report.data.seizures.length}</p>
+              <p className="text-xs text-muted sm:text-sm">Crisis en el periodo</p>
             </div>
-            <div className="rounded-2xl bg-surface-2 p-4">
-              <p className="font-display text-4xl font-bold">{report.data.adherence ? percent(report.data.adherence.rate) : '--'}</p>
+            <div className="rounded-2xl bg-surface-2 p-3 sm:p-4">
+              <p className="font-display text-3xl font-bold sm:text-4xl">{report.data.adherence && report.data.adherence.total > 0 ? percent(report.data.adherence.rate) : '--'}</p>
               <p className="text-sm text-muted">Adherencia</p>
             </div>
-            <div className="rounded-2xl bg-surface-2 p-4">
-              <p className="font-display text-4xl font-bold">{report.data.medications.filter((m) => m.active).length}</p>
-              <p className="text-sm text-muted">Medicamentos activos</p>
+            <div className="rounded-2xl bg-surface-2 p-3 sm:p-4">
+              <p className="font-display text-3xl font-bold sm:text-4xl">{report.data.medications.filter((m) => m.active).length}</p>
+              <p className="text-xs text-muted sm:text-sm">Medicamentos activos</p>
             </div>
           </section>
 
           <section className="mt-10">
             <h3 className="font-display text-xl font-semibold">Tratamiento actual</h3>
-            <table className="mt-3 w-full text-left text-sm">
+            {report.data.medications.length === 0 ? (
+              <p className="mt-3 text-muted">No hay medicamentos registrados.</p>
+            ) : (
+            <div className="-mx-1 overflow-x-auto px-1"><table className="mt-3 w-full min-w-[26rem] text-left text-sm">
               <thead>
                 <tr className="border-b border-line text-muted">
                   <th className="py-2 font-semibold">Medicamento</th>
@@ -98,7 +101,8 @@ export default function ReportPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
+            )}
           </section>
 
           <section className="mt-10">
@@ -106,7 +110,7 @@ export default function ReportPage() {
             {report.data.seizures.length === 0 ? (
               <p className="mt-3 text-muted">No se registraron crisis en este periodo.</p>
             ) : (
-              <table className="mt-3 w-full text-left text-sm">
+              <div className="-mx-1 overflow-x-auto px-1"><table className="mt-3 w-full min-w-[26rem] text-left text-sm">
                 <thead>
                   <tr className="border-b border-line text-muted">
                     <th className="py-2 font-semibold">Fecha</th>
@@ -125,7 +129,7 @@ export default function ReportPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             )}
           </section>
 

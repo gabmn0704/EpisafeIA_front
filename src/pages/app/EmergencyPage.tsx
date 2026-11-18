@@ -4,6 +4,7 @@ import { BellRing, CheckCircle2, Loader2, MapPin, MapPinOff, Send, ShieldAlert, 
 import clsx from 'clsx'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { ContactActions } from '@/components/emergency/ContactActions'
 import { Card } from '@/components/ui/Card'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { useEmergencyFlow } from '@/hooks/useEmergencyFlow'
@@ -11,6 +12,7 @@ import { useGeolocationPermission, useNotificationPermission, type PermissionUi 
 import { useQuery } from '@/hooks/useQuery'
 import { contactsApi } from '@/lib/api/endpoints'
 import { formatDateTime } from '@/lib/format'
+import { useAuth } from '@/providers/AuthProvider'
 
 const permLabel: Record<PermissionUi, { text: string; tone: 'ok' | 'coral' | 'amber' | 'neutral' }> = {
   granted: { text: 'Activado', tone: 'ok' },
@@ -24,6 +26,7 @@ const statusLabel = { queued: 'En cola', sent: 'Enviado', failed: 'Falló' } as 
 
 export default function EmergencyPage() {
   const flow = useEmergencyFlow(5)
+  const { user } = useAuth()
   const geo = useGeolocationPermission()
   const notif = useNotificationPermission()
   const contacts = useQuery(() => contactsApi.list())
@@ -35,7 +38,7 @@ export default function EmergencyPage() {
       <PageHeader title="Emergencia" description="Un toque avisa a tus contactos con tu hora y tu ubicación. Tienes 5 segundos para cancelar si fue un error." />
 
       <div className="grid grid-flow-dense gap-5 lg:grid-cols-12">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[radial-gradient(80%_80%_at_50%_0%,#ff5c78_0%,#d0003c_60%,#7a0024_100%)] p-8 text-white lg:col-span-8 lg:p-12" aria-live="assertive">
+        <div className="relative overflow-hidden rounded-[2rem] shadow-elev-3 bg-[radial-gradient(80%_80%_at_50%_0%,#ff5c78_0%,#d0003c_60%,#7a0024_100%)] p-5 text-white sm:p-8 lg:col-span-8 lg:p-12" aria-live="assertive">
           <AnimatePresence mode="wait">
             {flow.phase === 'idle' || flow.phase === 'error' ? (
               <motion.div key="idle" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center py-6 text-center">
@@ -54,11 +57,11 @@ export default function EmergencyPage() {
                     </span>
                   </button>
                 </div>
-                <p className="mt-24 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
+                <p className="mt-20 max-w-md text-lg text-white/90">Presiónalo si estás por tener una crisis o necesitas ayuda ahora.</p>
                 {flow.phase === 'error' && (
                   <div role="alert" className="mt-6 w-full max-w-md rounded-2xl bg-black/30 p-4 text-sm">
                     <p className="font-semibold">No pudimos enviar la alerta: {flow.error}</p>
-                    <p className="mt-1 text-white/80">Si es grave, llama de inmediato a tu línea local de emergencias.</p>
+                    <p className="mt-1 text-white/80">Si es grave, avisa ahora a tus contactos con los botones de abajo en cuanto puedas.</p>
                     <Button className="mt-3" variant="lime" onClick={flow.triggerNow}>
                       Reintentar ahora
                     </Button>
@@ -116,7 +119,10 @@ export default function EmergencyPage() {
                   ))}
                   {(flow.event?.notifications?.length ?? 0) === 0 && <li className="rounded-2xl bg-black/25 px-5 py-4 text-sm">No hay contactos configurados: la alerta quedó registrada pero nadie fue notificado.</li>}
                 </ul>
-                <p className="mt-5 flex items-center gap-2 text-sm text-white/85">
+                <h3 className="mt-8 font-display text-xl font-semibold">Avisar ahora a mis contactos</h3>
+                <p className="mb-3 mt-1 text-sm text-white/80">Por prioridad. Elige a quién llamar o escribir.</p>
+                <ContactActions contacts={contacts.data ?? []} name={user?.fullName ?? 'Una persona'} event={flow.event} />
+                <p className="mt-6 flex items-center gap-2 text-sm text-white/85">
                   {flow.location === 'granted' ? <MapPin className="size-4" aria-hidden /> : <MapPinOff className="size-4" aria-hidden />}
                   {flow.location === 'granted' ? 'Tu ubicación fue compartida.' : 'Se envió sin ubicación (permiso no disponible).'}
                 </p>
@@ -174,7 +180,7 @@ export default function EmergencyPage() {
 
           <Card className={clsx('!bg-surface-2')}>
             <p className="text-sm text-muted">
-              En una emergencia médica grave, llama siempre primero a tu número local de emergencias. EpiSafe IA complementa, no reemplaza, la atención médica.
+              Tras activar la alerta, elige a quién llamar o escribir. EpiSafe IA complementa, no reemplaza, la atención médica.
             </p>
           </Card>
         </div>

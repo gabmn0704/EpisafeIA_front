@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Mail, MessageSquare, Pencil, Phone, Plus, Trash2, Users } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
+import { ConfirmSheet } from '@/components/ui/ConfirmSheet'
 import { Modal } from '@/components/ui/Modal'
 import { Input } from '@/components/ui/Field'
 import { PageHeader } from '@/components/ui/PageHeader'
@@ -82,6 +83,7 @@ export default function ContactsPage() {
   const toast = useToast()
   const contacts = useQuery(() => contactsApi.list())
   const [editing, setEditing] = useState<EmergencyContact | 'new' | null>(null)
+  const [removing, setRemoving] = useState<EmergencyContact | null>(null)
 
   const save = async (input: EmergencyContactInput) => {
     try {
@@ -96,10 +98,10 @@ export default function ContactsPage() {
   }
 
   const remove = async (c: EmergencyContact) => {
-    if (!window.confirm(`¿Quitar a ${c.name} de tus contactos de emergencia?`)) return
     try {
       await contactsApi.remove(c.id)
       toast.success('Contacto eliminado')
+      setRemoving(null)
       contacts.reload()
     } catch (e) {
       toast.error('No se pudo eliminar', e instanceof Error ? e.message : undefined)
@@ -128,50 +130,54 @@ export default function ContactsPage() {
       ) : (contacts.data?.length ?? 0) === 0 ? (
         <EmptyState icon={<Users className="size-6" />} title="Aún no tienes contactos" description="Agrega al menos una persona de confianza para que alguien reciba tu alerta." action={<Button onClick={() => setEditing('new')}>Agregar contacto</Button>} />
       ) : (
-        <ul className="grid gap-5 md:grid-cols-2">
+        <ul className="stagger grid gap-4 md:grid-cols-2">
           {contacts.data?.map((c) => (
-            <li key={c.id} className="relative rounded-3xl border border-line bg-surface p-6 shadow-card">
-              <span className="absolute -top-3 left-6 grid size-8 place-items-center rounded-full bg-lime font-display text-sm font-extrabold text-lime-ink" title={`Prioridad ${c.priority}`}>
-                {c.priority}
-              </span>
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="font-display text-xl font-semibold">{c.name}</p>
+            <li key={c.id} className="relative overflow-hidden rounded-[1.75rem] border border-line/70 bg-surface p-4 shadow-elev-1 sm:p-5">
+              <div className="flex items-center gap-3">
+                <span className="relative grid size-14 shrink-0 place-items-center rounded-2xl bg-brand font-display text-xl font-bold text-brand-ink">
+                  {c.name
+                    .split(' ')
+                    .map((p) => p[0])
+                    .slice(0, 2)
+                    .join('')
+                    .toUpperCase()}
+                  <span className="absolute -right-1.5 -top-1.5 grid size-6 place-items-center rounded-full bg-lime font-display text-xs font-extrabold text-lime-ink ring-2 ring-surface" title={`Prioridad ${c.priority}`}>
+                    {c.priority}
+                  </span>
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-display text-xl font-semibold leading-tight">{c.name}</p>
                   <p className="text-sm text-muted">{c.relationship}</p>
                 </div>
-                <div className="flex">
-                  <Button size="sm" variant="ghost" onClick={() => setEditing(c)} aria-label={`Editar ${c.name}`}>
-                    <Pencil className="size-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" onClick={() => remove(c)} aria-label={`Eliminar ${c.name}`}>
-                    <Trash2 className="size-4 text-coral" />
-                  </Button>
-                </div>
+                <button type="button" onClick={() => setEditing(c)} aria-label={`Editar ${c.name}`} className="press grid size-11 place-items-center rounded-full text-muted">
+                  <Pencil className="size-5" />
+                </button>
+                <button type="button" onClick={() => setRemoving(c)} aria-label={`Eliminar ${c.name}`} className="press grid size-11 place-items-center rounded-full text-coral">
+                  <Trash2 className="size-5" />
+                </button>
               </div>
-              <p className="mt-5 flex items-center gap-2 font-semibold">
-                <Phone className="size-4 text-brand" aria-hidden /> {c.phone}
-              </p>
-              {c.email && (
-                <p className="mt-2 flex items-center gap-2 text-sm text-muted">
-                  <Mail className="size-4" aria-hidden /> {c.email}
-                </p>
-              )}
-              <div className="mt-5 flex gap-2">
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <a href={`tel:${c.phone.replace(/[^+0-9]/g, '')}`} className="press flex min-h-12 w-full items-center gap-2 rounded-2xl bg-lime px-4 font-semibold text-lime-ink">
+                  <Phone className="size-4 shrink-0" aria-hidden /> <span className="truncate">{c.phone}</span>
+                </a>
                 {c.notifySms && (
-                  <Badge tone="brand">
+                  <Badge tone="brand" className="!py-2">
                     <MessageSquare className="size-3.5" aria-hidden /> SMS
                   </Badge>
                 )}
                 {c.notifyEmail && (
-                  <Badge tone="brand">
+                  <Badge tone="brand" className="!py-2">
                     <Mail className="size-3.5" aria-hidden /> Correo
                   </Badge>
                 )}
               </div>
+              {c.email && <p className="mt-2.5 truncate text-sm text-muted">{c.email}</p>}
             </li>
           ))}
         </ul>
       )}
+
+      <ConfirmSheet open={removing !== null} title="Quitar contacto" confirmLabel="Quitar contacto" message={`${removing?.name ?? 'Esta persona'} dejará de recibir tus alertas de emergencia.`} onConfirm={() => (removing ? remove(removing) : undefined)} onCancel={() => setRemoving(null)} />
 
       <Modal open={editing !== null} onClose={() => setEditing(null)} title={editing === 'new' ? 'Nuevo contacto' : 'Editar contacto'}>
         {editing !== null && <ContactForm initial={editing === 'new' ? undefined : editing} nextPriority={(contacts.data?.length ?? 0) + 1} onSubmit={save} onCancel={() => setEditing(null)} />}
