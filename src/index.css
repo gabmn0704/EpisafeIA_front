@@ -22,6 +22,22 @@
   --cyan: #14c8ee;
   --ok: #0f9d58;
   --shadow: 0 1px 0 rgb(18 13 58 / 0.04), 0 18px 40px -22px rgb(91 43 255 / 0.35);
+
+  /* Estados semánticos de riesgo */
+  --risk-low: #0f9d58;
+  --risk-low-soft: #dcf5e8;
+  --risk-moderate: #c98a00;
+  --risk-moderate-soft: #fff0cc;
+  --risk-high: #ec3a5b;
+  --risk-high-soft: #ffe1e7;
+  --risk-critical: #b3123a;
+  --risk-critical-soft: #fbd0da;
+
+  /* Elevaciones por capas: base, elevada, flotante */
+  --elev-1: 0 0 0 1px rgb(18 13 58 / 0.06), 0 1px 2px rgb(18 13 58 / 0.04);
+  --elev-2: 0 0 0 1px rgb(18 13 58 / 0.05), 0 2px 4px rgb(18 13 58 / 0.04), 0 14px 28px -14px rgb(91 43 255 / 0.22);
+  --elev-3: 0 0 0 1px rgb(18 13 58 / 0.06), 0 8px 16px rgb(18 13 58 / 0.06), 0 32px 64px -24px rgb(91 43 255 / 0.4);
+  --ring: rgb(18 13 58 / 0.06);
 }
 
 .dark {
@@ -42,6 +58,20 @@
   --cyan: #3fdcff;
   --ok: #3ddc97;
   --shadow: 0 1px 0 rgb(255 255 255 / 0.03), 0 24px 48px -24px rgb(0 0 0 / 0.7);
+
+  --risk-low: #3ddc97;
+  --risk-low-soft: #0f3326;
+  --risk-moderate: #ffc044;
+  --risk-moderate-soft: #3a2c0a;
+  --risk-high: #ff5c78;
+  --risk-high-soft: #3a1425;
+  --risk-critical: #ff8aa0;
+  --risk-critical-soft: #4a1226;
+
+  --elev-1: 0 0 0 1px rgb(255 255 255 / 0.06), inset 0 1px 0 rgb(255 255 255 / 0.04);
+  --elev-2: 0 0 0 1px rgb(255 255 255 / 0.07), inset 0 1px 0 rgb(255 255 255 / 0.05), 0 18px 32px -16px rgb(0 0 0 / 0.6);
+  --elev-3: 0 0 0 1px rgb(255 255 255 / 0.09), inset 0 1px 0 rgb(255 255 255 / 0.06), 0 40px 72px -24px rgb(0 0 0 / 0.85);
+  --ring: rgb(255 255 255 / 0.08);
 }
 
 @theme inline {
@@ -64,6 +94,24 @@
   --color-cyan: var(--cyan);
   --color-ok: var(--ok);
   --shadow-card: var(--shadow);
+  --shadow-elev-1: var(--elev-1);
+  --shadow-elev-2: var(--elev-2);
+  --shadow-elev-3: var(--elev-3);
+  --color-risk-low: var(--risk-low);
+  --color-risk-low-soft: var(--risk-low-soft);
+  --color-risk-moderate: var(--risk-moderate);
+  --color-risk-moderate-soft: var(--risk-moderate-soft);
+  --color-risk-high: var(--risk-high);
+  --color-risk-high-soft: var(--risk-high-soft);
+  --color-risk-critical: var(--risk-critical);
+  --color-risk-critical-soft: var(--risk-critical-soft);
+  --radius-xs: 0.5rem;
+  --radius-sm: 0.75rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 @layer base {
@@ -110,6 +158,44 @@
       transition-duration: 0.01ms !important;
     }
   }
+}
+
+/*
+ * Escala tipográfica: 5 niveles. Espaciado sobre rejilla de 4/8 px (escala por defecto de Tailwind).
+ * Radios: xs 8 (chips, inputs pequeños), sm 12 (botones, filas), md 16 (inputs), lg 20 (cards), xl 28 (hero, sheets).
+ */
+@utility t-display {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+}
+@utility t-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+@utility t-heading {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+@utility t-body {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+@utility t-caption {
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: var(--muted);
 }
 
 @layer utilities {
