@@ -36,7 +36,7 @@ export function AuthShell({ title, subtitle, children, footer }: { title: string
             Anticípate a la crisis. <span className="text-lime">Vive con más calma.</span>
           </h2>
           <p className="mt-5 max-w-md text-lg text-white/75">
-            Tu sueño, tu medicación y tu pulso hablan antes que tu cuerpo. EpiSafe IA los escucha por ti.
+            Tu sueño, tu medicación y tus hábitos hablan antes que tu cuerpo. EpiSafe IA los escucha por ti.
           </p>
         </div>
         <p className="relative z-10 flex items-center gap-2 text-sm text-white/70">

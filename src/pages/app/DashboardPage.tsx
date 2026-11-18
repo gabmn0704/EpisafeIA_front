@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { Activity, BellRing, CalendarCheck2, Flame, HeartPulse, ShieldCheck, Sparkles, Watch } from 'lucide-react'
+import { Activity, BellRing, CalendarCheck2, Flame, HeartPulse, ShieldCheck, Sparkles } from 'lucide-react'
 import { FactorList } from '@/components/dashboard/FactorList'
 import { RiskGauge } from '@/components/dashboard/RiskGauge'
 import { RiskHistoryChart } from '@/components/dashboard/RiskHistoryChart'
@@ -89,29 +88,16 @@ export default function DashboardPage() {
         <StatTile className="md:col-span-4" tone="lime" label="Racha sin crisis" icon={<Flame className="size-5" />} value={s ? s.seizureFreeDays : '--'} unit={s?.seizureFreeDays === 1 ? 'día' : 'días'} caption={s?.lastSeizure ? `Última: ${relativeTime(s.lastSeizure.startedAt)}` : 'Sin crisis registradas'} />
         <StatTile className="md:col-span-3" tone="ink" label="Última crisis" icon={<CalendarCheck2 className="size-5" />} value={s?.lastSeizure ? formatDate(s.lastSeizure.startedAt, { day: 'numeric', month: 'short' }) : '--'} caption={s?.lastSeizure ? `Intensidad ${s.lastSeizure.severity ?? '?'} de 5` : 'Nada que reportar'} />
 
-        <Card className="relative overflow-hidden md:col-span-4">
-          <div className="flex items-center justify-between">
-            <p className="text-[0.8rem] font-semibold leading-tight text-muted">Pulso en vivo</p>
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-coral-soft text-coral">
-              <HeartPulse className="size-5" />
-            </span>
+        <Link to="/app/dispositivos" className="press relative col-span-2 flex items-center gap-3 overflow-hidden rounded-[1.75rem] border border-line/70 bg-surface p-4 shadow-elev-1 md:col-span-4 md:flex-col md:items-start">
+          <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-coral-soft text-coral">
+            <HeartPulse className="size-5" aria-hidden />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="font-display font-semibold leading-tight">Reloj y pulso</p>
+            <p className="mt-0.5 text-sm text-muted">Conexión con tu reloj, pronto.</p>
           </div>
-          {s?.currentHeartRate != null ? (
-            <div className="mt-5 flex items-end gap-2">
-              <motion.span animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 0.9, repeat: Infinity }} className="origin-left font-display text-5xl font-bold tabular-nums leading-none text-coral">
-                {s.currentHeartRate}
-              </motion.span>
-              <span className="pb-1 font-semibold text-muted">lpm</span>
-            </div>
-          ) : (
-            <div className="mt-3">
-              <p className="text-[0.8rem] leading-snug text-muted">Ningún reloj envía pulso ahora.</p>
-              <Link to="/app/dispositivos" className="press mt-2 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand">
-                <Watch className="size-4" aria-hidden /> Conectar
-              </Link>
-            </div>
-          )}
-        </Card>
+          <Badge tone="lime">Próximamente</Badge>
+        </Link>
 
         <Card className="col-span-2 md:col-span-7">
           <CardHeader title="Qué mueve tu riesgo" subtitle="Factores ordenados por impacto" icon={<Activity className="size-5" />} />
@@ -134,7 +120,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="col-span-2 md:col-span-4">
-          <CardHeader title="Alertas activas" subtitle="Detectadas por tu reloj" icon={<BellRing className="size-5" />} />
+          <CardHeader title="Alertas activas" subtitle="Avisos de tu seguimiento" icon={<BellRing className="size-5" />} />
           {summary.loading || !s ? (
             <Skeleton className="h-24" />
           ) : s.activeAlerts.length === 0 ? (

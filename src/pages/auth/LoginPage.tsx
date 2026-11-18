@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/Field'
 import { useForm } from '@/hooks/useForm'
 import { ApiError } from '@/lib/api/client'
 import { loginSchema } from '@/lib/schemas'
+import { useServerWake } from '@/hooks/useServerWake'
+import { ensureAwake } from '@/lib/api/wake'
 import { useAuth } from '@/providers/AuthProvider'
 
 export default function LoginPage() {
@@ -16,6 +18,7 @@ export default function LoginPage() {
   const location = useLocation()
   const from = (location.state as { from?: string } | null)?.from ?? '/app'
   const form = useForm(loginSchema, { email: '', password: '' })
+  const wake = useServerWake()
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -26,6 +29,8 @@ export default function LoginPage() {
     if (!data) return
     setSubmitting(true)
     try {
+      // Si el servidor estaba dormido, esperamos a que despierte (con aviso) antes de enviar.
+      if (!(await ensureAwake())) throw new ApiError(0, 'NETWORK_ERROR', 'El servidor no respondió todavía. Inténtalo de nuevo en un momento.')
       await login(data.email, data.password)
       navigate(from, { replace: true })
     } catch (err) {
@@ -63,7 +68,7 @@ export default function LoginPage() {
           </Link>
         </div>
         <Button type="submit" size="lg" className="w-full" loading={submitting}>
-          Iniciar sesión
+          {submitting && wake.status === "waking" ? "Despertando el servidor…" : "Iniciar sesión"}
         </Button>
       </form>
     </AuthShell>

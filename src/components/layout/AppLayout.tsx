@@ -186,15 +186,7 @@ export function AppLayout() {
 
   useEffect(() => {
     return openStream((e) => {
-      if (e.type === 'wearable_alert') {
-        toast.push({
-          tone: 'warning',
-          title: 'Alerta de tu reloj',
-          description: 'Detectamos un patrón inusual. Revisa cómo te sientes.',
-          durationMs: 9000,
-          action: { label: 'Ver dispositivos', onClick: () => navigate('/app/dispositivos') },
-        })
-      } else if (e.type === 'emergency') {
+      if (e.type === 'emergency') {
         toast.push({ tone: 'error', title: 'Emergencia activa', description: 'Se avisó a tus contactos.', durationMs: 9000 })
       }
     })

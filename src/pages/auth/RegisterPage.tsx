@@ -10,6 +10,8 @@ import { useForm } from '@/hooks/useForm'
 import { ApiError } from '@/lib/api/client'
 import { passwordStrength } from '@/lib/passwordStrength'
 import { registerSchema } from '@/lib/schemas'
+import { useServerWake } from '@/hooks/useServerWake'
+import { ensureAwake } from '@/lib/api/wake'
 import { useAuth } from '@/providers/AuthProvider'
 import { useToast } from '@/providers/ToastProvider'
 
@@ -27,6 +29,7 @@ export default function RegisterPage() {
     confirm: '',
     terms: false,
   })
+  const wake = useServerWake()
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
   const strength = passwordStrength(form.values.password)
@@ -38,6 +41,8 @@ export default function RegisterPage() {
     if (!data) return
     setSubmitting(true)
     try {
+      // Si el servidor estaba dormido, esperamos a que despierte (con aviso) antes de enviar.
+      if (!(await ensureAwake())) throw new ApiError(0, 'NETWORK_ERROR', 'El servidor no respondió todavía. Inténtalo de nuevo en un momento.')
       await register({ email: data.email, password: data.password, fullName: data.fullName, birthDate: data.birthDate || undefined })
       toast.success('Cuenta creada', 'Bienvenido a EpiSafe IA.')
       navigate('/app', { replace: true })
@@ -98,7 +103,7 @@ export default function RegisterPage() {
           )}
         </div>
         <Button type="submit" size="lg" className="w-full" loading={submitting}>
-          Crear cuenta
+          {submitting && wake.status === "waking" ? "Despertando el servidor…" : "Crear cuenta"}
         </Button>
       </form>
     </AuthShell>

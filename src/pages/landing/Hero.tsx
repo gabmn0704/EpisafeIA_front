@@ -58,7 +58,7 @@ export function Hero() {
           ))}
         </h1>
         <p data-hero-sub className="mx-auto mt-8 max-w-2xl text-lg text-white/75 sm:text-xl">
-          EpiSafe IA aprende de tu sueño, tu medicación y tu pulso para avisarte cuando tu riesgo sube, y alerta a quienes te cuidan si lo necesitas.
+          EpiSafe IA aprende de tu sueño, tu medicación y tus hábitos para avisarte cuando tu riesgo sube, y alerta a quienes te cuidan si lo necesitas.
         </p>
         <div data-hero-cta className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link to="/registro" className={buttonClasses('lime', 'lg', 'min-w-56')}>

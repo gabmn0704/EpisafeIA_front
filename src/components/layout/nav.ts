@@ -18,7 +18,7 @@ export const navItems: NavItem[] = [
   { to: '/app/medicamentos', label: 'Medicamentos', icon: Pill },
   { to: '/app/crisis', label: 'Crisis', icon: Activity },
   { to: '/app/insights', label: 'Insights de IA', icon: Sparkles },
-  { to: '/app/dispositivos', label: 'Reloj y dispositivos', icon: Watch },
+  { to: '/app/dispositivos', label: 'Reloj (pronto)', icon: Watch },
   { to: '/app/contactos', label: 'Contactos', icon: Users },
   { to: '/app/informe', label: 'Informe médico', icon: FileText },
 ]

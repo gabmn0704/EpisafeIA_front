@@ -1,130 +1,52 @@
-import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { BellRing, Trash2, Watch } from 'lucide-react'
-import { CloudProviders } from '@/components/wearable/CloudProviders'
-import { WatchPanel } from '@/components/wearable/WatchPanel'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
-import { Card, CardHeader } from '@/components/ui/Card'
-import { PageHeader } from '@/components/ui/PageHeader'
-import { ErrorState, Skeleton } from '@/components/ui/States'
-import { useHeartRateMonitor } from '@/hooks/useHeartRateMonitor'
-import { useQuery } from '@/hooks/useQuery'
-import { wearablesApi } from '@/lib/api/endpoints'
-import type { WearableSampleInput } from '@/lib/api/types'
-import { relativeTime } from '@/lib/format'
-import { useToast } from '@/providers/ToastProvider'
+import { Link } from 'react-router-dom'
+import { BellRing, HeartPulse, ShieldCheck, Sparkles } from 'lucide-react'
+import { buttonClasses } from '@/components/ui/buttonStyles'
 
-const providerLabel = { web_bluetooth: 'Bluetooth', fitbit: 'Fitbit', google_health: 'Google Health', apple_health: 'Apple Health', garmin: 'Garmin', manual: 'Manual' } as const
-const alertLabel = { tachycardia: 'Taquicardia sostenida', motion_convulsive: 'Movimiento convulsivo', hr_anomaly: 'Pulso anómalo', fall: 'Posible caída' } as const
+const teasers = [
+  { icon: HeartPulse, title: 'Pulso en tiempo real', body: 'Tu ritmo cardíaco sumado a tu riesgo diario.', tint: 'bg-coral-soft text-coral' },
+  { icon: BellRing, title: 'Alertas anticipadas', body: 'Avisos cuando algo se sale de lo habitual.', tint: 'bg-brand-soft text-brand' },
+  { icon: ShieldCheck, title: 'Más tranquilidad', body: 'Tus contactos, un paso más cerca de ayudarte.', tint: 'bg-ok/15 text-ok' },
+]
 
+/** Reloj y dispositivos: aún no disponible. Sin emparejamiento ni permisos de Bluetooth. */
 export default function DevicesPage() {
-  const toast = useToast()
-  const navigate = useNavigate()
-  const devices = useQuery(() => wearablesApi.devices())
-  const alerts = useQuery(() => wearablesApi.alerts())
-
-  const send = useCallback((samples: WearableSampleInput[], deviceId?: string) => wearablesApi.sendSamples(samples, deviceId), [])
-  const onDeviceConnected = useCallback(
-    async ({ name, id }: { name: string; id: string }) => {
-      const existing = devices.data?.find((d) => d.externalId === id)
-      if (existing) return existing.id
-      const created = await wearablesApi.addDevice({ provider: 'web_bluetooth', deviceName: name, externalId: id })
-      devices.reload()
-      return created.id
-    },
-    [devices],
-  )
-  const monitor = useHeartRateMonitor({ send, onDeviceConnected })
-
-  const removeDevice = async (id: string, name: string) => {
-    if (!window.confirm(`¿Quitar ${name}?`)) return
-    try {
-      await wearablesApi.removeDevice(id)
-      devices.reload()
-    } catch (e) {
-      toast.error('No se pudo quitar', e instanceof Error ? e.message : undefined)
-    }
-  }
-
-  const escalate = async (id: string) => {
-    try {
-      await wearablesApi.escalate(id)
-      toast.success('Alerta convertida en emergencia', 'Avisamos a tus contactos.')
-      alerts.reload()
-      navigate('/app/emergencia')
-    } catch (e) {
-      toast.error('No se pudo escalar', e instanceof Error ? e.message : undefined)
-    }
-  }
-
   return (
-    <div className="space-y-8">
-      <PageHeader title="Reloj y dispositivos" description="Tu pulso en tiempo real ayuda a detectar señales antes de que tú las sientas." />
+    <div>
+      <section className="bg-hero relative overflow-hidden rounded-[2rem] p-6 text-center text-white shadow-elev-3 sm:p-10">
+        <div className="grain pointer-events-none absolute inset-0" aria-hidden />
+        <div className="relative mx-auto grid size-44 place-items-center" aria-hidden>
+          <span className="absolute inset-0 animate-[pulse-ring_3s_ease-out_infinite] rounded-full bg-white/20" />
+          <span className="absolute inset-0 animate-[pulse-ring_3s_ease-out_1.2s_infinite] rounded-full bg-white/15" />
+          <svg viewBox="0 0 64 64" className="relative size-32 drop-shadow-[0_12px_24px_rgba(0,0,0,0.35)]">
+            <rect x="22" y="2" width="20" height="14" rx="5" fill="#ffffff" opacity="0.35" />
+            <rect x="22" y="48" width="20" height="14" rx="5" fill="#ffffff" opacity="0.35" />
+            <rect x="11" y="11" width="42" height="42" rx="14" fill="#150c4d" stroke="#c6ff3d" strokeWidth="2.5" />
+            <path d="M16 33h9l3.5-8 5.5 15 3.5-9 2 2h9" fill="none" stroke="#c6ff3d" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
+        <p className="relative mt-4 inline-flex items-center gap-1.5 rounded-full bg-lime px-3.5 py-1.5 text-sm font-bold text-lime-ink">
+          <Sparkles className="size-4" aria-hidden /> Próximamente
+        </p>
+        <h1 className="relative mt-4 font-display text-[2rem] font-bold leading-[1.05] tracking-tight text-balance sm:text-5xl">Reloj y dispositivos</h1>
+        <p className="relative mx-auto mt-3 max-w-md text-base text-white/80">Estamos preparando la conexión con tu reloj. Mientras tanto, tu registro diario y tu medicación ya alimentan a la IA.</p>
+        <Link to="/app/registro" className={buttonClasses('lime', 'lg', 'relative mt-6 w-full sm:w-auto')}>
+          Registrar mi día
+        </Link>
+      </section>
 
-      <WatchPanel monitor={monitor} />
-
-      <div className="grid grid-flow-dense gap-5 lg:grid-cols-2">
-        <Card>
-          <CardHeader title="Dispositivos vinculados" icon={<Watch className="size-5" />} />
-          {devices.loading ? (
-            <Skeleton className="h-24" />
-          ) : devices.error ? (
-            <ErrorState compact error={devices.error} onRetry={devices.reload} />
-          ) : (devices.data?.length ?? 0) === 0 ? (
-            <p className="text-sm text-muted">Cuando conectes un dispositivo por primera vez, aparecerá aquí.</p>
-          ) : (
-            <ul className="divide-y divide-line">
-              {devices.data?.map((d) => (
-                <li key={d.id} className="flex items-center gap-3 py-3.5">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-semibold">{d.deviceName}</p>
-                    <p className="text-sm text-muted">
-                      {providerLabel[d.provider]}
-                      {d.lastSeenAt ? ` · visto ${relativeTime(d.lastSeenAt)}` : ''}
-                    </p>
-                  </div>
-                  <Badge tone={d.active ? 'ok' : 'neutral'}>{d.active ? 'Activo' : 'Inactivo'}</Badge>
-                  <Button size="sm" variant="ghost" onClick={() => removeDevice(d.id, d.deviceName)} aria-label={`Quitar ${d.deviceName}`}>
-                    <Trash2 className="size-4 text-coral" />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-
-        <Card>
-          <CardHeader title="Alertas del reloj" subtitle="Detectadas por las reglas en streaming" icon={<BellRing className="size-5" />} />
-          {alerts.loading ? (
-            <Skeleton className="h-24" />
-          ) : alerts.error ? (
-            <ErrorState compact error={alerts.error} onRetry={alerts.reload} />
-          ) : (alerts.data?.length ?? 0) === 0 ? (
-            <p className="text-sm text-muted">Sin alertas. Si tu reloj detecta taquicardia sostenida o movimiento convulsivo, la verás aquí.</p>
-          ) : (
-            <ul className="space-y-3">
-              {alerts.data?.map((a) => (
-                <li key={a.id} className="flex items-center justify-between gap-3 rounded-2xl bg-coral-soft p-4">
-                  <div>
-                    <p className="font-semibold">{alertLabel[a.kind]}</p>
-                    <p className="text-sm text-muted">
-                      {relativeTime(a.detectedAt)} &middot; confianza {Math.round(a.confidence * 100)}%
-                    </p>
-                  </div>
-                  {!a.convertedEventId && (
-                    <Button size="sm" variant="danger" onClick={() => escalate(a.id)}>
-                      Escalar
-                    </Button>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
-      </div>
-
-      <CloudProviders />
+      <ul className="stagger mt-4 grid gap-3 sm:grid-cols-3">
+        {teasers.map(({ icon: Icon, title, body, tint }) => (
+          <li key={title} className="flex items-start gap-3 rounded-[1.75rem] border border-line/70 bg-surface p-4 shadow-elev-1">
+            <span className={`grid size-11 shrink-0 place-items-center rounded-2xl ${tint}`}>
+              <Icon className="size-5" aria-hidden />
+            </span>
+            <div>
+              <p className="font-display font-semibold leading-tight">{title}</p>
+              <p className="mt-1 text-sm text-muted">{body}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }

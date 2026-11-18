@@ -86,8 +86,8 @@ export function Features() {
                   <HeartPulse className="size-8 text-coral" aria-hidden />
                   <BellRing className="size-8 text-lime" aria-hidden />
                 </div>
-                <h3 className="mt-5 font-display text-4xl font-semibold tracking-tight">Tu reloj, en tiempo real</h3>
-                <p className="mt-3 max-w-md text-lg opacity-80">Conecta cualquier reloj o banda con pulso por Bluetooth. Detectamos taquicardia sostenida y movimiento anómalo, y tú decides si escalar.</p>
+                <h3 className="mt-5 font-display text-4xl font-semibold tracking-tight">Tu reloj, muy pronto</h3>
+                <p className="mt-3 max-w-md text-lg opacity-80">Estamos preparando la conexión con tu reloj para sumar tu pulso al análisis. Por ahora, tu registro diario y tu medicación ya alimentan a la IA.</p>
               </div>
               <div className={`rounded-3xl bg-white/5 p-6 ${hoverImg}`}>
                 <MiniPulse />
