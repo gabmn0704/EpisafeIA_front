@@ -135,6 +135,8 @@ export function asList<T>(payload: unknown): T[] {
   if (payload && typeof payload === 'object') {
     const o = payload as Record<string, unknown>
     for (const key of ['items', 'data', 'results']) if (Array.isArray(o[key])) return o[key] as T[]
+    // Sobres con nombre de recurso ({ contacts: [...] }, { doses: [...] }): la primera lista que aparezca.
+    for (const v of Object.values(o)) if (Array.isArray(v)) return v as T[]
   }
   return []
 }
