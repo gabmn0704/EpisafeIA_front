@@ -45,8 +45,8 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      <div className="grid grid-flow-dense grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-12">
-        <section className="relative col-span-2 overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-7 lg:col-span-5 lg:row-span-2">
+      <div className="grid grid-flow-dense grid-cols-2 gap-3 sm:gap-5 md:grid-cols-12">
+        <section className="relative col-span-2 overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-7 md:col-span-5 md:row-span-2">
           <div className="grain pointer-events-none absolute inset-0" aria-hidden />
           <div className="relative flex items-start justify-between gap-3">
             <div>
@@ -82,11 +82,11 @@ export default function DashboardPage() {
           )}
         </section>
 
-        <StatTile className="lg:col-span-3" tone="brand" label="Adherencia 30 días" icon={<ShieldCheck className="size-5" />} value={s?.adherence ? percent(s.adherence.rate) : '--'} caption={s?.adherence ? `${s.adherence.taken} de ${s.adherence.total} dosis` : 'Sin datos aún'} />
-        <StatTile className="lg:col-span-4" tone="lime" label="Racha sin crisis" icon={<Flame className="size-5" />} value={s ? s.seizureFreeDays : '--'} unit="días" caption={s?.lastSeizure ? `Última: ${relativeTime(s.lastSeizure.startedAt)}` : 'Sin crisis registradas'} />
-        <StatTile className="lg:col-span-3" tone="ink" label="Última crisis" icon={<CalendarCheck2 className="size-5" />} value={s?.lastSeizure ? formatDate(s.lastSeizure.startedAt, { day: 'numeric', month: 'short' }) : '--'} caption={s?.lastSeizure ? `Intensidad ${s.lastSeizure.severity ?? '?'} de 5` : 'Nada que reportar'} />
+        <StatTile className="md:col-span-3" tone="brand" label="Adherencia 30 días" icon={<ShieldCheck className="size-5" />} value={s?.adherence ? percent(s.adherence.rate) : '--'} caption={s?.adherence ? `${s.adherence.taken} de ${s.adherence.total} dosis` : 'Sin datos aún'} />
+        <StatTile className="md:col-span-4" tone="lime" label="Racha sin crisis" icon={<Flame className="size-5" />} value={s ? s.seizureFreeDays : '--'} unit={s?.seizureFreeDays === 1 ? 'día' : 'días'} caption={s?.lastSeizure ? `Última: ${relativeTime(s.lastSeizure.startedAt)}` : 'Sin crisis registradas'} />
+        <StatTile className="md:col-span-3" tone="ink" label="Última crisis" icon={<CalendarCheck2 className="size-5" />} value={s?.lastSeizure ? formatDate(s.lastSeizure.startedAt, { day: 'numeric', month: 'short' }) : '--'} caption={s?.lastSeizure ? `Intensidad ${s.lastSeizure.severity ?? '?'} de 5` : 'Nada que reportar'} />
 
-        <Card className="relative overflow-hidden lg:col-span-4">
+        <Card className="relative overflow-hidden md:col-span-4">
           <div className="flex items-center justify-between">
             <p className="text-[0.8rem] font-semibold leading-tight text-muted">Pulso en vivo</p>
             <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-coral-soft text-coral">
@@ -110,7 +110,7 @@ export default function DashboardPage() {
           )}
         </Card>
 
-        <Card className="col-span-2 lg:col-span-7">
+        <Card className="col-span-2 md:col-span-7">
           <CardHeader title="Qué mueve tu riesgo" subtitle="Factores ordenados por impacto" icon={<Activity className="size-5" />} />
           {summary.loading || !s ? (
             <div className="space-y-5">
@@ -125,12 +125,12 @@ export default function DashboardPage() {
           )}
         </Card>
 
-        <Card className="col-span-2 lg:col-span-8">
+        <Card className="col-span-2 md:col-span-8">
           <CardHeader title="Evolución de 30 días" subtitle="Tu puntaje diario de riesgo" icon={<Activity className="size-5" />} />
           {history.loading ? <Skeleton className="h-56" /> : history.error ? <ErrorState compact error={history.error} onRetry={history.reload} /> : history.data && history.data.length > 0 ? <RiskHistoryChart data={history.data} /> : <p className="text-muted">Aún no hay historial.</p>}
         </Card>
 
-        <Card className="col-span-2 lg:col-span-4">
+        <Card className="col-span-2 md:col-span-4">
           <CardHeader title="Alertas activas" subtitle="Detectadas por tu reloj" icon={<BellRing className="size-5" />} />
           {summary.loading || !s ? (
             <Skeleton className="h-24" />
