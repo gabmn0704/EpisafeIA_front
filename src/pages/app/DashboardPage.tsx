@@ -21,6 +21,9 @@ const alertText: Record<string, string> = {
   fall: 'Posible caída',
 }
 
+/** El resplandor del hero cambia con el nivel de riesgo. */
+const glow: Record<string, string> = { low: '#18d98b', moderate: '#ffb020', high: '#ff3d7a', critical: '#ff1f4b' }
+
 export default function DashboardPage() {
   const { user } = useAuth()
   const summary = useQuery(() => dashboardApi.summary())
@@ -45,8 +48,8 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      <div className="grid grid-flow-dense grid-cols-2 gap-3 sm:gap-5 md:grid-cols-12">
-        <section className="relative col-span-2 overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-7 md:col-span-5 md:row-span-2">
+      <div className="stagger grid grid-flow-dense grid-cols-2 gap-3 sm:gap-5 md:grid-cols-12">
+        <section style={{ ['--hero-glow' as string]: glow[s?.risk?.level ?? ''] ?? undefined }} className="relative col-span-2 overflow-hidden rounded-[2rem] bg-hero p-5 text-white shadow-elev-3 sm:p-7 md:col-span-5 md:row-span-2">
           <div className="grain pointer-events-none absolute inset-0" aria-hidden />
           <div className="relative flex items-start justify-between gap-3">
             <div>
